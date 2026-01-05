@@ -1109,17 +1109,18 @@ if (!chatMessages.length) {
           <div class="divider"></div>
           <div class="row">
             <div class="col">
-              <div class="label">Follow-up answer 1</div>
+              <div class="label">1) <span class="muted">${escapeHtml(followUpQs[0] || "")}</span></div>
               <input class="input" id="fu0" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[0]||"")}"/>
             </div>
             <div class="col">
-              <div class="label">Follow-up answer 2</div>
+              <div class="label">2) <span class="muted">${escapeHtml(followUpQs[1] || "")}</span></div>
               <input class="input" id="fu1" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[1]||"")}"/>
             </div>
           </div>
           <div class="row" style="margin-top:10px">
             <div class="col">
-              <div class="label">Follow-up answer 3</div>
+             <div class="label">3) <span class="muted">${escapeHtml(followUpQs[2] || "")}</span></div>
+
               <input class="input" id="fu2" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[2]||"")}"/>
             </div>
           </div>
