@@ -743,42 +743,55 @@ if (nameEl) {
       if(ansEl) ansEl.oninput = (e)=>{ followUpAnswers[i] = e.target.value; };
     }
 
-    const evalBtn = document.getElementById("evalBtn");
-    if(evalBtn) evalBtn.onclick = () => {
-      if(followUpQs.length!==3){
-        alert("Click Start chat first.");
-        return;
-      }
-      const trimmed = followUpAnswers.map(x=>String(x||"").trim());
-      if(trimmed.some(x=>!x)){
-        alert("Please answer all 3 follow-up questions.");
-        return;
-      }
-      chatMessages.push({role:"user", content:"A1: " + trimmed[0]});
-      chatMessages.push({role:"user", content:"A2: " + trimmed[1]});
-      chatMessages.push({role:"user", content:"A3: " + trimmed[2]});
-      chatMessages.push({role:"assistant", content:"Thanks — calculating a fair price in ₪…"});
-      aiResult = evaluatePrice({
-        productName: draft.productName,
-        category: draft.category,
-        location: draft.location,
-        photoBase64: draft.photoBase64,
-        survey: draft.survey
-      }, trimmed);
+const evalBtn = document.getElementById("evalBtn");
+if (evalBtn) evalBtn.onclick = () => {
+  if (followUpQs.length !== 3) {
+    alert("Click Start chat first.");
+    return;
+  }
 
-      chatMessages.push({
-        role:"assistant",
-        content:
-          `Estimated fair range: ${formatILS(aiResult.estimatedRangeILS.low)}–${formatILS(aiResult.estimatedRangeILS.high)}\n` +
-          `Recommended listing price: ${formatILS(aiResult.recommendedListPriceILS)}\n` +
-          `Quick-sale price: ${formatILS(aiResult.quickSalePriceILS)}`
-      });
-      chatMessages.push({role:"assistant", content:"Why:\n" + aiResult.explanation});
-      chatMessages.push({role:"assistant", content:"Negotiation tips:\n" + aiResult.negotiationTips});
-      chatMessages.push({role:"assistant", content:"What price do you want to list it for? (₪)"});
-      render();
-      scrollChatToBottom();
-    };
+  // Read answers directly from the inputs (more reliable than state)
+  const a0 = (document.getElementById("fu0")?.value || "").trim();
+  const a1 = (document.getElementById("fu1")?.value || "").trim();
+  const a2 = (document.getElementById("fu2")?.value || "").trim();
+  const trimmed = [a0, a1, a2];
+
+  if (trimmed.some(x => !x)) {
+    alert("Please answer all 3 follow-up questions.");
+    return;
+  }
+
+  // keep state in sync
+  followUpAnswers = trimmed;
+
+  chatMessages.push({ role: "user", content: "A1: " + trimmed[0] });
+  chatMessages.push({ role: "user", content: "A2: " + trimmed[1] });
+  chatMessages.push({ role: "user", content: "A3: " + trimmed[2] });
+  chatMessages.push({ role: "assistant", content: "Thanks — calculating a fair price in ₪…" });
+
+  aiResult = evaluatePrice({
+    productName: draft.productName,
+    category: draft.category,
+    location: draft.location,
+    photoBase64: draft.photoBase64,
+    survey: draft.survey
+  }, trimmed);
+
+  chatMessages.push({
+    role: "assistant",
+    content:
+      `Estimated fair range: ${formatILS(aiResult.estimatedRangeILS.low)}–${formatILS(aiResult.estimatedRangeILS.high)}\n` +
+      `Recommended listing price: ${formatILS(aiResult.recommendedListPriceILS)}\n` +
+      `Quick-sale price: ${formatILS(aiResult.quickSalePriceILS)}`
+  });
+  chatMessages.push({ role: "assistant", content: "Why:\n" + aiResult.explanation });
+  chatMessages.push({ role: "assistant", content: "Negotiation tips:\n" + aiResult.negotiationTips });
+  chatMessages.push({ role: "assistant", content: "What price do you want to list it for? (₪)" });
+
+  render();
+  scrollChatToBottom();
+};
+
 
     const priceEl = document.getElementById("sellerPrice");
     if(priceEl) priceEl.oninput = (e)=>{ draft.sellerPrice = e.target.value; };
@@ -1024,7 +1037,7 @@ if (nameEl) {
           <button class="btn" id="backBtn">Back</button>
           <div class="row">
             <button class="btn" id="startChatBtn" ${chatStarted?"disabled":""}>Start chat</button>
-            <button class="btn" id="evalBtn" ${(!chatStarted || !evalReady || hasAI) ? "disabled":""}>Evaluate price</button>
+            <button class="btn" id="evalBtn" ${(!chatStarted || hasAI) ? "disabled":""}>Evaluate price</button>
           </div>
         </div>
 
