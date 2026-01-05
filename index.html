@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Outdoor Gear Marketplace (Demo)</title>
+  <style>
+    :root{
+      --bg:#fafafa; --card:#fff; --text:#111; --muted:#666; --border:#e7e7e7;
+      --accent:#111; --accent2:#f3f3f3; --ok:#0a7; --warn:#c60;
+      --radius:18px;
+      --shadow: 0 1px 0 rgba(0,0,0,.03);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    body{margin:0;background:var(--bg);color:var(--text);}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    header{
+      position:sticky;top:0;z-index:5;background:rgba(255,255,255,.9);
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:38px;height:38px;border-radius:14px;background:var(--accent)}
+    .brand b{font-size:14px}
+    .brand small{display:block;color:var(--muted);font-size:12px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border:1px solid var(--border);
+      background:var(--card);
+      padding:10px 14px;border-radius:14px;
+      font-weight:600;font-size:13px;
+      box-shadow: var(--shadow);
+      cursor:pointer;
+    }
+    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn.ghost{background:transparent;border-color:transparent;box-shadow:none}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:#fff;color:var(--muted)}
+    .pill.solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .grid{display:grid;gap:14px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card.pad{padding:16px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row.nowrap{flex-wrap:nowrap}
+    .col{flex:1;min-width:220px}
+    .muted{color:var(--muted)}
+    .h1{font-size:18px;font-weight:800}
+    .h2{font-size:14px;font-weight:800}
+    .small{font-size:12px}
+    .input, select, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      background:#fff;
+      outline:none;
+    }
+    textarea{min-height:90px;resize:vertical}
+    .label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px}
+    .help{font-size:12px;color:var(--muted);margin-top:6px}
+    .divider{height:1px;background:var(--border);margin:12px 0}
+    .cards{display:grid;gap:14px;grid-template-columns:repeat(1, minmax(0,1fr))}
+    @media(min-width:700px){ .cards{grid-template-columns:repeat(2, minmax(0,1fr))}}
+    @media(min-width:980px){ .cards{grid-template-columns:repeat(3, minmax(0,1fr))}}
+    .listing{
+      overflow:hidden; transition:.15s transform ease, .15s box-shadow ease;
+    }
+    .listing:hover{transform:translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.06)}
+    .img{width:100%;height:170px;object-fit:cover;display:block;background:#ddd}
+    .pad16{padding:14px}
+    .kvs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .kv{background:#fafafa;border:1px solid var(--border);border-radius:14px;padding:10px}
+    .kv b{display:block;font-size:14px}
+    .kv small{color:var(--muted)}
+    .stepper{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .step{display:flex;align-items:center;gap:8px}
+    .dot{
+      width:26px;height:26px;border-radius:999px;display:grid;place-items:center;
+      font-size:12px;font-weight:800;background:#f2f2f2;color:#777;border:1px solid var(--border)
+    }
+    .dot.active{background:rgba(17,17,17,.08);color:#111;border-color:rgba(17,17,17,.12)}
+    .dot.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .chatbox{max-height:320px;overflow:auto;border-radius:16px;border:1px solid var(--border);background:#fff;padding:12px}
+    .bubble{max-width:85%;padding:10px 12px;border-radius:16px;font-size:13px;white-space:pre-line}
+    .bubble.assistant{background:#f3f3f3;color:#111}
+    .bubble.user{background:#111;color:#fff;margin-left:auto}
+    .warn{color:var(--warn);font-weight:700}
+    footer{margin-top:24px;border-top:1px solid var(--border);background:#fff}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap topbar">
+    <a class="brand" href="#home">
+      <div class="logo"></div>
+      <div>
+        <b>Outdoor Gear</b>
+        <small>Marketplace · Demo (₪) · localStorage</small>
+      </div>
+    </a>
+    <div class="row">
+      <a class="btn" href="#post">Post an item</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="app"></div>
+</main>
+
+<footer>
+  <div class="wrap small muted">
+    Demo only · No database · Data saved in your browser (localStorage) · Currency: ILS (₪)
+  </div>
+</footer>
+
+<script>
+/* =========================
+   Simple demo marketplace
+   - One file, no build
+   - Hash routes: #home, #post, #listing/<id>
+   ========================= */
+
+const STORAGE_KEY = "ogm_demo_listings_v1";
+
+const CATEGORIES = ["Backpacks","Tents","Sleeping bags","Shoes","Jackets","Stoves","Trekking poles","Other"];
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function formatILS(n){ const x = Math.round(Number(n)||0); return "₪" + x.toLocaleString("en-US"); }
+function nanoid(){ return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16); }
+
+function svgDataUri(label){
+  const safe = escapeHtml(label);
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+    <defs>
+      <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#111"/>
+        <stop offset="100%" stop-color="#555"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="800" fill="url(#g)"/>
+    <circle cx="260" cy="300" r="120" fill="rgba(255,255,255,0.08)"/>
+    <circle cx="980" cy="220" r="160" fill="rgba(255,255,255,0.06)"/>
+    <text x="80" y="720" font-family="Arial" font-size="56" fill="rgba(255,255,255,0.86)">${safe}</text>
+    <text x="80" y="780" font-family="Arial" font-size="26" fill="rgba(255,255,255,0.6)">Demo image</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
+function seedListings(){
+  const now = new Date().toISOString();
+  return [
+    mkSeed("seed-1", now, "Osprey Atmos 65 (Men)", "Backpacks", "Tel Aviv", 820, 850, {low:650,high:900},
+      {used:5, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
+      [
+        ["Brand/model and size?", "Osprey Atmos 65L, size M"],
+        ["Approx age / purchase year?", "Bought in 2022"],
+        ["Original new price (₪)?", "About ₪1,250"]
+      ]
+    ),
+    mkSeed("seed-2", now, "MSR PocketRocket 2 Stove", "Stoves", "Haifa", 189, 190, {low:140,high:200},
+      {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:4},
+      [
+        ["Brand/model and accessories?", "MSR PocketRocket 2, no extras"],
+        ["Approx age / purchase year?", "2021"],
+        ["Original new price (₪)?", "₪250–₪300"]
+      ]
+    ),
+    mkSeed("seed-3", now, "Naturehike Cloud Up 2 Tent", "Tents", "Beer Sheva", 349, 360, {low:260,high:380},
+      {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
+      [
+        ["Version + footprint included?", "20D version, includes footprint"],
+        ["Approx age / purchase year?", "2022"],
+        ["Original new price (₪)?", "₪550"]
+      ]
+    ),
+    mkSeed("seed-4", now, "The North Face Thermoball Jacket", "Jackets", "Ramat Gan", 399, 390, {low:260,high:420},
+      {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
+      [
+        ["Exact size?", "Men’s M"],
+        ["Approx age / purchase year?", "2021"],
+        ["Original new price (₪)?", "₪700"]
+      ]
+    ),
+    mkSeed("seed-5", now, "Decathlon Forclaz Trekking Poles (pair)", "Trekking poles", "Modiin", 110, 95, {low:70,high:120},
+      {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:6},
+      [
+        ["Exact model + baskets included?", "Forclaz MT500, includes baskets"],
+        ["Approx age / purchase year?", "2024"],
+        ["Original new price (₪)?", "₪180"]
+      ]
+    )
+  ];
+}
+
+function mkSeed(id, createdAt, name, category, location, recPrice, listPrice, range, s, followUps){
+  return {
+    id, createdAt,
+    productName:name,
+    category, location,
+    photoBase64: svgDataUri(name),
+    survey: {
+      usedOutdoors1to7:s.used,
+      performanceVsNew1to7:s.perf,
+      cleanness1to7:s.clean,
+      warrantyActiveYesNo:s.warr,
+      missingPartsYesNo:s.miss,
+      damagesYesNo:s.dmg,
+      damagesDescription:s.dmgText,
+      saleUrgency1to7:s.urg,
+      productName:name
+    },
+    followUps: followUps.map(([q,a])=>({question:q, answer:a})),
+    ai: {
+      estimatedRangeILS: range,
+      recommendedListPriceILS: recPrice,
+      quickSalePriceILS: Math.max(20, recPrice - 60),
+      explanation: "Seeded demo listing. In real use, the assistant references your survey + follow-ups to estimate fair pricing in Israel.",
+      negotiationTips: `List at ${formatILS(recPrice)}. Accept slightly lower depending on interest.`
+    },
+    sellerChosenListPriceILS: listPrice
+  };
+}
+
+function loadListings(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : null;
+  }catch{ return null; }
+}
+
+function saveListings(listings){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+}
+
+function ensureSeeded(){
+  const existing = loadListings();
+  if(existing && existing.length) return;
+  saveListings(seedListings());
+}
+
+function getById(id){
+  const all = loadListings() || [];
+  return all.find(x=>x.id===id) || null;
+}
+
+function upsertListing(listing){
+  const all = loadListings() || [];
+  const idx = all.findIndex(x=>x.id===listing.id);
+  if(idx>=0) all[idx]=listing;
+  else all.unshift(listing);
+  saveListings(all);
+}
+
+function resetDemo(){
+  localStorage.removeItem(STORAGE_KEY);
+  ensureSeeded();
+}
+
+/* ===== Mock pricing assistant ===== */
+
+function baseNewPriceBucket(category){
+  switch(category){
+    case "Backpacks": return {low:700, high:1500};
+    case "Tents": return {low:450, high:1600};
+    case "Sleeping bags": return {low:400, high:1400};
+    case "Shoes": return {low:400, high:900};
+    case "Jackets": return {low:350, high:1200};
+    case "Stoves": return {low:180, high:550};
+    case "Trekking poles": return {low:140, high:500};
+    default: return {low:300, high:900};
+  }
+}
+
+function generateFollowUps(draft){
+  const s = draft.survey;
+  const q1 = "Brand + exact model + size/spec (if relevant)?";
+  const q2 = (s.warrantyActiveYesNo === "Yes")
+    ? "When does the warranty expire (approx), and do you have proof of purchase?"
+    : "Approx age / purchase year?";
+  const q3 = (s.damagesYesNo === "Yes")
+    ? "How does the damage affect function (cosmetic only vs performance), and was it repaired?"
+    : "What was the original new price (approx) in ₪ (or your best estimate)?";
+  return [q1,q2,q3];
+}
+
+function extractNumber(text){
+  const m = String(text).replace(/,/g,"").match(/(\d{2,5})/);
+  if(!m) return null;
+  const n = Number(m[1]);
+  return Number.isFinite(n) ? n : null;
+}
+
+function clamp(min,v,max){ return Math.max(min, Math.min(max,v)); }
+function round10(n){ return Math.round(n/10)*10; }
+
+function evaluatePrice(draft, answers){
+  const s = draft.survey;
+  const bucket = baseNewPriceBucket(draft.category);
+  let newMid = (bucket.low + bucket.high)/2;
+
+  // if user typed an original price, blend it in:
+  const maybe = extractNumber(answers.join(" "));
+  if(maybe && maybe >= 80 && maybe <= 10000){
+    newMid = 0.65*maybe + 0.35*newMid;
+  }
+
+  // used ratio baseline and adjustments
+  let usedRatio = 0.55;
+  const usePenalty = (s.usedOutdoors1to7-1)/6;
+  const perfBoost = (s.performanceVsNew1to7-1)/6;
+  const cleanBoost = (s.cleanness1to7-1)/6;
+
+  usedRatio -= 0.18*usePenalty;
+  usedRatio += 0.10*perfBoost;
+  usedRatio += 0.07*cleanBoost;
+
+  if(s.warrantyActiveYesNo==="Yes") usedRatio += 0.05;
+  if(s.missingPartsYesNo==="Yes") usedRatio -= 0.12;
+  if(s.damagesYesNo==="Yes") usedRatio -= 0.16;
+
+  usedRatio = clamp(0.15, usedRatio, 0.85);
+
+  const urgency01 = (clamp(1,s.saleUrgency1to7,7)-1)/6;
+
+  const fairMid = newMid * usedRatio;
+  const fairLow = fairMid * (0.88 - 0.08*urgency01);
+  const fairHigh = fairMid * (1.12 - 0.04*urgency01);
+
+  const recommended = fairMid * (1.04 - 0.10*urgency01);
+  const quickSale = fairMid * (0.90 - 0.12*urgency01);
+
+  const low = round10(Math.max(20,fairLow));
+  const high = round10(Math.max(low+20,fairHigh));
+  const rec = round10(clamp(low,recommended,high));
+  const quick = round10(clamp(20,quickSale,rec));
+
+  const explanation =
+`Pricing basis: Israeli used-market estimate in ₪ for category "${draft.category}".
+Survey factors:
+- Used outdoors: ${s.usedOutdoors1to7}/7
+- Performance vs new: ${s.performanceVsNew1to7}/7
+- Cleanness: ${s.cleanness1to7}/7
+- Warranty: ${s.warrantyActiveYesNo}
+- Missing parts: ${s.missingPartsYesNo}
+- Damages: ${s.damagesYesNo}${s.damagesYesNo==="Yes" && s.damagesDescription ? " ("+s.damagesDescription+")" : ""}
+- Sale urgency: ${s.saleUrgency1to7}/7
+
+Follow-ups:
+1) ${answers[0]}
+2) ${answers[1]}
+3) ${answers[2]}
+
+Result: fair range + recommended price optimized for urgency.`;
+
+  const tips =
+`List at ${formatILS(rec)}.
+Be ready to accept ${formatILS(Math.max(20,rec-40))}–${formatILS(Math.max(20,rec-80))} depending on interest.
+If you want it gone fast, post ${formatILS(quick)} and keep the description honest + clear.`;
+
+  return {
+    estimatedRangeILS:{low,high},
+    recommendedListPriceILS:rec,
+    quickSalePriceILS:quick,
+    explanation,
+    negotiationTips:tips
+  };
+}
+
+/* ====== UI / ROUTER ====== */
+
+const app = document.getElementById("app");
+
+function route(){
+  ensureSeeded();
+  const hash = location.hash || "#home";
+  if(hash.startsWith("#listing/")){
+    const id = hash.slice("#listing/".length);
+    renderListing(id);
+    return;
+  }
+  if(hash === "#post"){ renderPost(); return; }
+  renderHome();
+}
+
+window.addEventListener("hashchange", route);
+window.addEventListener("load", route);
+
+function renderHome(){
+  const all = loadListings() || [];
+  const state = { q:"", cat:"All" };
+
+  const view = () => {
+    const qq = state.q.trim().toLowerCase();
+    const filtered = all.filter(l=>{
+      const okQ = qq ? l.productName.toLowerCase().includes(qq) : true;
+      const okC = state.cat==="All" ? true : l.category===state.cat;
+      return okQ && okC;
+    });
+
+    app.innerHTML = `
+      <div class="grid">
+        <div class="card pad">
+          <div class="row" style="align-items:flex-end;justify-content:space-between">
+            <div>
+              <div class="h1">Marketplace</div>
+              <div class="muted small">Browse used outdoor gear in Israel. Demo uses localStorage (no database). Prices in ₪.</div>
+            </div>
+            <div class="row">
+              <button class="btn" id="resetBtn">Reset demo data</button>
+              <a class="btn primary" href="#post">Post an item</a>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div class="col">
+              <div class="label">Search</div>
+              <input class="input" id="q" placeholder="Search by product name…" value="${escapeHtml(state.q)}"/>
+            </div>
+            <div class="col" style="max-width:260px">
+              <div class="label">Category</div>
+              <select class="input" id="cat">
+                ${["All",...CATEGORIES].map(c=>`<option ${c===state.cat?"selected":""}>${escapeHtml(c)}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        ${filtered.length===0 ? `
+          <div class="card pad">
+            <div class="h2">No results</div>
+            <div class="muted small">Try a different search or category.</div>
+          </div>
+        ` : `
+          <div class="cards">
+            ${filtered.map(l=>listingCard(l)).join("")}
+          </div>
+        `}
+
+        <div class="card pad">
+          <div class="h2">Professor note</div>
+          <div class="small muted" style="margin-top:6px">
+            This is a demo. Listings you create are saved only in your browser (localStorage). Seeded listings appear for everyone.
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("q").addEventListener("input", (e)=>{ state.q = e.target.value; view(); });
+    document.getElementById("cat").addEventListener("change", (e)=>{ state.cat = e.target.value; view(); });
+    document.getElementById("resetBtn").addEventListener("click", ()=>{
+      resetDemo();
+      location.reload();
+    });
+  };
+
+  view();
+}
+
+function listingCard(l){
+  return `
+  <a class="card listing" href="#listing/${encodeURIComponent(l.id)}">
+    <img class="img" src="${escapeHtml(l.photoBase64)}" alt="${escapeHtml(l.productName)}"/>
+    <div class="pad16">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="h2">${escapeHtml(l.productName)}</div>
+          <div class="row" style="margin-top:6px">
+            <span class="pill solid">${escapeHtml(l.category)}</span>
+            <span class="pill">${escapeHtml(l.location)}</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="small muted">AI rec.</div>
+          <div style="font-weight:900">${formatILS(l.ai.recommendedListPriceILS)}</div>
+        </div>
+      </div>
+
+      <div class="row" style="justify-content:space-between;margin-top:10px">
+        <div class="small muted">Urgency: <b style="color:#111">${l.survey.saleUrgency1to7}</b>/7</div>
+        <div class="small muted">Listed: <b style="color:#111">${l.sellerChosenListPriceILS ? formatILS(l.sellerChosenListPriceILS) : "—"}</b></div>
+      </div>
+    </div>
+  </a>`;
+}
+
+function renderListing(id){
+  const listing = getById(decodeURIComponent(id));
+  if(!listing){
+    app.innerHTML = `
+      <div class="card pad">
+        <div class="h2">Listing not found</div>
+        <div class="muted small">It may have been removed from localStorage.</div>
+        <div class="divider"></div>
+        <a class="btn" href="#home">Back to marketplace</a>
+      </div>
+    `;
+    return;
+  }
+
+  const s = listing.survey;
+  app.innerHTML = `
+    <div class="grid" style="grid-template-columns:1fr;gap:14px">
+      <div class="row" style="gap:14px">
+        <div class="card" style="flex:1;min-width:320px">
+          <img class="img" style="height:320px" src="${escapeHtml(listing.photoBase64)}" alt="${escapeHtml(listing.productName)}"/>
+          <div class="pad16">
+            <div class="row" style="align-items:center;justify-content:space-between">
+              <div>
+                <div class="h1">${escapeHtml(listing.productName)}</div>
+                <div class="row" style="margin-top:6px">
+                  <span class="pill solid">${escapeHtml(listing.category)}</span>
+                  <span class="pill">${escapeHtml(listing.location)}</span>
+                </div>
+              </div>
+              <a class="btn" href="#home">← Back</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="kvs">
+              <div class="kv">
+                <small>Seller list price</small>
+                <b>${listing.sellerChosenListPriceILS ? formatILS(listing.sellerChosenListPriceILS) : "Not set"}</b>
+              </div>
+              <div class="kv">
+                <small>AI recommended</small>
+                <b>${formatILS(listing.ai.recommendedListPriceILS)}</b>
+                <small>Fair: ${formatILS(listing.ai.estimatedRangeILS.low)}–${formatILS(listing.ai.estimatedRangeILS.high)}</small>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row">
+              <div class="col">
+                <div class="h2">Condition snapshot</div>
+                <div class="small" style="margin-top:8px">
+                  Used outdoors: <b>${s.usedOutdoors1to7}</b>/7<br/>
+                  Performance vs new: <b>${s.performanceVsNew1to7}</b>/7<br/>
+                  Cleanness: <b>${s.cleanness1to7}</b>/7<br/>
+                  Warranty active: <b>${s.warrantyActiveYesNo}</b><br/>
+                  Missing parts: <b>${s.missingPartsYesNo}</b><br/>
+                  Damages: <b>${s.damagesYesNo}</b>
+                  ${s.damagesYesNo==="Yes" && s.damagesDescription ? `<div class="help">${escapeHtml(s.damagesDescription)}</div>` : ""}
+                  <br/>
+                  Sale urgency: <b>${s.saleUrgency1to7}</b>/7
+                </div>
+              </div>
+              <div class="col">
+                <div class="h2">AI explanation</div>
+                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.explanation)}</div>
+                <div class="divider"></div>
+                <div class="h2">Negotiation tips</div>
+                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.negotiationTips)}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pad" style="width:360px;max-width:100%">
+          <div class="h2">Follow-up answers</div>
+          <div class="help">The assistant asked exactly 3 questions.</div>
+          <div class="divider"></div>
+          <div class="grid">
+            ${(listing.followUps||[]).map((qa,i)=>`
+              <div class="card pad" style="border-radius:16px">
+                <div class="small muted">Q${i+1}</div>
+                <div class="h2" style="margin-top:6px">${escapeHtml(qa.question)}</div>
+                <div class="small" style="margin-top:8px">${escapeHtml(qa.answer)}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPost(){
+  // Wizard state
+  const draft = {
+    productName: "",
+    category: CATEGORIES[0],
+    location: "Israel",
+    photoBase64: svgDataUri("Your photo here"),
+    survey: {
+      usedOutdoors1to7: 4,
+      performanceVsNew1to7: 5,
+      cleanness1to7: 5,
+      warrantyActiveYesNo: "No",
+      missingPartsYesNo: "No",
+      damagesYesNo: "No",
+      damagesDescription: "",
+      saleUrgency1to7: 4
+    },
+    followUps: [],
+    ai: null,
+    sellerPrice: ""
+  };
+
+  const steps = ["Basics","Survey","AI Chat","Review"];
+  let step = 0;
+
+  // Chat state
+  let chatMessages = [];
+  let followUpQs = [];
+  let followUpAnswers = ["","",""];
+  let aiResult = null;
+
+  const render = () => {
+    app.innerHTML = `
+      <div class="grid">
+        <div class="card pad">
+          <div class="row" style="align-items:center;justify-content:space-between">
+            <div>
+              <div class="h1">Post an item</div>
+              <div class="muted small">Simple demo wizard. AI is mock (no keys).</div>
+            </div>
+            <div class="stepper">
+              ${steps.map((s,i)=>`
+                <div class="step">
+                  <div class="dot ${i<step?"done":(i===step?"active":"")}">${i+1}</div>
+                  <div class="small ${i===step?"":"muted"}" style="font-weight:700">${s}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        ${step===0 ? renderBasics(draft) : ""}
+        ${step===1 ? renderSurvey(draft) : ""}
+        ${step===2 ? renderChat(draft) : ""}
+        ${step===3 ? renderReview(draft, aiResult) : ""}
+      </div>
+    `;
+
+    bind();
+  };
+
+  const bind = () => {
+    // common nav
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    if(backBtn) backBtn.onclick = () => { step = Math.max(0, step-1); render(); };
+    if(nextBtn) nextBtn.onclick = () => {
+      const err = validateStep(step, draft, aiResult);
+      if(err){ alert(err); return; }
+      step = Math.min(steps.length-1, step+1);
+      render();
+    };
+
+    const cancelBtn = document.getElementById("cancelBtn");
+    if(cancelBtn) cancelBtn.onclick = () => { location.hash = "#home"; };
+
+    // step 0 bindings
+    const nameEl = document.getElementById("productName");
+    if(nameEl) nameEl.oninput = (e)=>{ draft.productName = e.target.value; render(); };
+
+    const catEl = document.getElementById("category");
+    if(catEl) catEl.onchange = (e)=>{ draft.category = e.target.value; render(); };
+
+    const locEl = document.getElementById("location");
+    if(locEl) locEl.oninput = (e)=>{ draft.location = e.target.value; };
+
+    const fileEl = document.getElementById("photo");
+    if(fileEl) fileEl.onchange = (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      if(f.size > 2_500_000){
+        alert("Image too large for this demo (localStorage). Please choose < 2.5MB.");
+        e.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => { draft.photoBase64 = String(reader.result||""); render(); };
+      reader.readAsDataURL(f);
+    };
+
+    // step 1 bindings
+    bindRange("usedOutdoors", "usedOutdoorsVal", v=>draft.survey.usedOutdoors1to7=v);
+    bindRange("performance", "performanceVal", v=>draft.survey.performanceVsNew1to7=v);
+    bindRange("cleanness", "cleannessVal", v=>draft.survey.cleanness1to7=v);
+    bindRange("urgency", "urgencyVal", v=>draft.survey.saleUrgency1to7=v);
+
+    const warrEl = document.getElementById("warranty");
+    if(warrEl) warrEl.onchange = (e)=>{ draft.survey.warrantyActiveYesNo = e.target.value; };
+
+    const missEl = document.getElementById("missing");
+    if(missEl) missEl.onchange = (e)=>{ draft.survey.missingPartsYesNo = e.target.value; };
+
+    const dmgEl = document.getElementById("damages");
+    if(dmgEl) dmgEl.onchange = (e)=>{ draft.survey.damagesYesNo = e.target.value; render(); };
+
+    const dmgTextEl = document.getElementById("damagesText");
+    if(dmgTextEl) dmgTextEl.oninput = (e)=>{ draft.survey.damagesDescription = e.target.value; };
+
+    // step 2 (chat) bindings
+    const startChatBtn = document.getElementById("startChatBtn");
+    if(startChatBtn) startChatBtn.onclick = () => {
+      // initialize chat once
+      if(chatMessages.length) return;
+      const summary = surveySummaryLine(draft);
+      chatMessages = [
+        {role:"assistant", content:"Hi! I’m your pricing assistant for used outdoor gear in Israel (₪). I’ll ask exactly 3 follow-up questions, then estimate a fair price range."},
+        {role:"assistant", content: summary}
+      ];
+      followUpQs = generateFollowUps({
+        productName: draft.productName,
+        category: draft.category,
+        location: draft.location,
+        photoBase64: draft.photoBase64,
+        survey: draft.survey
+      });
+      chatMessages.push({role:"assistant", content:"To price it accurately, I need 3 quick details:"});
+      chatMessages.push({role:"assistant", content:"1) " + followUpQs[0]});
+      chatMessages.push({role:"assistant", content:"2) " + followUpQs[1]});
+      chatMessages.push({role:"assistant", content:"3) " + followUpQs[2]});
+      render();
+      scrollChatToBottom();
+    };
+
+    for(let i=0;i<3;i++){
+      const ansEl = document.getElementById("fu"+i);
+      if(ansEl) ansEl.oninput = (e)=>{ followUpAnswers[i] = e.target.value; };
+    }
+
+    const evalBtn = document.getElementById("evalBtn");
+    if(evalBtn) evalBtn.onclick = () => {
+      if(followUpQs.length!==3){
+        alert("Click Start chat first.");
+        return;
+      }
+      const trimmed = followUpAnswers.map(x=>String(x||"").trim());
+      if(trimmed.some(x=>!x)){
+        alert("Please answer all 3 follow-up questions.");
+        return;
+      }
+      chatMessages.push({role:"user", content:"A1: " + trimmed[0]});
+      chatMessages.push({role:"user", content:"A2: " + trimmed[1]});
+      chatMessages.push({role:"user", content:"A3: " + trimmed[2]});
+      chatMessages.push({role:"assistant", content:"Thanks — calculating a fair price in ₪…"});
+      aiResult = evaluatePrice({
+        productName: draft.productName,
+        category: draft.category,
+        location: draft.location,
+        photoBase64: draft.photoBase64,
+        survey: draft.survey
+      }, trimmed);
+
+      chatMessages.push({
+        role:"assistant",
+        content:
+          `Estimated fair range: ${formatILS(aiResult.estimatedRangeILS.low)}–${formatILS(aiResult.estimatedRangeILS.high)}\n` +
+          `Recommended listing price: ${formatILS(aiResult.recommendedListPriceILS)}\n` +
+          `Quick-sale price: ${formatILS(aiResult.quickSalePriceILS)}`
+      });
+      chatMessages.push({role:"assistant", content:"Why:\n" + aiResult.explanation});
+      chatMessages.push({role:"assistant", content:"Negotiation tips:\n" + aiResult.negotiationTips});
+      chatMessages.push({role:"assistant", content:"What price do you want to list it for? (₪)"});
+      render();
+      scrollChatToBottom();
+    };
+
+    const priceEl = document.getElementById("sellerPrice");
+    if(priceEl) priceEl.oninput = (e)=>{ draft.sellerPrice = e.target.value; };
+
+    const savePriceBtn = document.getElementById("savePriceBtn");
+    if(savePriceBtn) savePriceBtn.onclick = () => {
+      if(!aiResult){ alert("Run the evaluation first."); return; }
+      const n = Number(draft.sellerPrice);
+      if(!Number.isFinite(n) || n<=0){ alert("Enter a valid positive number in ₪."); return; }
+      draft.followUps = followUpQs.map((q,i)=>({question:q, answer:String(followUpAnswers[i]).trim()}));
+      draft.ai = aiResult;
+      chatMessages.push({role:"user", content:"I want to list it for " + formatILS(n)});
+      chatMessages.push({role:"assistant", content:"Great — saved. Continue to Review."});
+      render();
+      scrollChatToBottom();
+    };
+
+    // publish
+    const publishBtn = document.getElementById("publishBtn");
+    if(publishBtn) publishBtn.onclick = () => {
+      if(!draft.ai) return alert("Missing AI results.");
+      const n = Number(draft.sellerPrice);
+      if(!Number.isFinite(n) || n<=0) return alert("Missing/invalid seller list price.");
+      const listing = {
+        id: nanoid(),
+        createdAt: new Date().toISOString(),
+        productName: draft.productName.trim(),
+        category: draft.category,
+        location: (draft.location||"Israel").trim() || "Israel",
+        photoBase64: draft.photoBase64,
+        survey: {
+          usedOutdoors1to7: Number(draft.survey.usedOutdoors1to7),
+          performanceVsNew1to7: Number(draft.survey.performanceVsNew1to7),
+          cleanness1to7: Number(draft.survey.cleanness1to7),
+          warrantyActiveYesNo: draft.survey.warrantyActiveYesNo,
+          missingPartsYesNo: draft.survey.missingPartsYesNo,
+          damagesYesNo: draft.survey.damagesYesNo,
+          damagesDescription: String(draft.survey.damagesDescription||""),
+          saleUrgency1to7: Number(draft.survey.saleUrgency1to7),
+          productName: draft.productName.trim()
+        },
+        followUps: draft.followUps || [],
+        ai: draft.ai,
+        sellerChosenListPriceILS: Math.round(n)
+      };
+      upsertListing(listing);
+      location.hash = "#listing/" + encodeURIComponent(listing.id);
+    };
+  };
+
+  function bindRange(id, outId, onSet){
+    const el = document.getElementById(id);
+    const out = document.getElementById(outId);
+    if(el && out){
+      el.oninput = (e)=>{
+        const v = Number(e.target.value);
+        out.textContent = v;
+        onSet(v);
+      };
+    }
+  }
+
+  function validateStep(step, draft, aiResult){
+    if(step===0){
+      if(!draft.productName.trim()) return "Please enter a product name.";
+      if(!draft.category) return "Please choose a category.";
+      if(!draft.photoBase64) return "Please upload a photo.";
+    }
+    if(step===1){
+      if(draft.survey.damagesYesNo==="Yes" && !String(draft.survey.damagesDescription||"").trim()){
+        return "Please describe the damages.";
+      }
+    }
+    if(step===2){
+      if(!draft.ai){
+        return "Please complete AI chat: Start chat → answer 3 follow-ups → evaluate → save your list price.";
+      }
+    }
+    return null;
+  }
+
+  render();
+
+  function renderBasics(d){
+    return `
+      <div class="card pad">
+        <div class="h2">Step 1 · Basics</div>
+        <div class="help">Upload a photo and basic product info.</div>
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="col">
+            <div class="label">Name of the product</div>
+            <input class="input" id="productName" value="${escapeHtml(d.productName)}" placeholder="e.g., Osprey Atmos 65 backpack"/>
+            <div class="help">Tip: include brand + model.</div>
+          </div>
+          <div class="col" style="max-width:300px">
+            <div class="label">Category</div>
+            <select class="input" id="category">
+              ${CATEGORIES.map(c=>`<option ${c===d.category?"selected":""}>${escapeHtml(c)}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div class="col">
+            <div class="label">Location</div>
+            <input class="input" id="location" value="${escapeHtml(d.location)}" placeholder="Israel"/>
+          </div>
+          <div class="col">
+            <div class="label">Photo (JPG/PNG, < 2.5MB)</div>
+            <input class="input" id="photo" type="file" accept="image/png,image/jpeg"/>
+            <div class="help">For demo reliability, large images are blocked.</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <img class="img" style="height:280px;border-radius:16px" src="${escapeHtml(d.photoBase64)}" alt="preview"/>
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn ghost" id="cancelBtn">Cancel</button>
+          <button class="btn primary" id="nextBtn">Continue</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSurvey(d){
+    const s = d.survey;
+    return `
+      <div class="card pad">
+        <div class="h2">Step 2 · Survey (8 questions)</div>
+        <div class="help">1=low/poor · 4=medium · 7=high/excellent</div>
+        <div class="divider"></div>
+
+        <div class="row">
+          ${rangeField("Used outdoors (1–7)", "usedOutdoors", s.usedOutdoors1to7, "usedOutdoorsVal")}
+          ${rangeField("Performance vs new (1–7)", "performance", s.performanceVsNew1to7, "performanceVal")}
+        </div>
+
+        <div class="row">
+          ${rangeField("Cleanness (1–7)", "cleanness", s.cleanness1to7, "cleannessVal")}
+          ${rangeField("Sale urgency (1–7)", "urgency", s.saleUrgency1to7, "urgencyVal")}
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="label">Warranty active</div>
+            <select class="input" id="warranty">
+              <option ${s.warrantyActiveYesNo==="Yes"?"selected":""}>Yes</option>
+              <option ${s.warrantyActiveYesNo==="No"?"selected":""}>No</option>
+            </select>
+          </div>
+          <div class="col">
+            <div class="label">Missing parts?</div>
+            <select class="input" id="missing">
+              <option ${s.missingPartsYesNo==="No"?"selected":""}>No</option>
+              <option ${s.missingPartsYesNo==="Yes"?"selected":""}>Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="label">Damages?</div>
+            <select class="input" id="damages">
+              <option ${s.damagesYesNo==="No"?"selected":""}>No</option>
+              <option ${s.damagesYesNo==="Yes"?"selected":""}>Yes</option>
+            </select>
+            ${s.damagesYesNo==="Yes" ? `
+              <div style="margin-top:10px">
+                <div class="label">Describe damages</div>
+                <textarea class="input" id="damagesText" placeholder="e.g., small tear, zipper sticks…">${escapeHtml(s.damagesDescription||"")}</textarea>
+              </div>
+            ` : ``}
+          </div>
+          <div class="col">
+            <div class="label">Name of the product (read-only)</div>
+            <input class="input" value="${escapeHtml(d.productName)}" readonly/>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn" id="backBtn">Back</button>
+          <button class="btn primary" id="nextBtn">Continue to AI chat</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function rangeField(label, id, value, outId){
+    return `
+      <div class="col">
+        <div class="label">${escapeHtml(label)}</div>
+        <div class="row nowrap" style="align-items:center">
+          <input class="input" style="padding:0;height:40px" type="range" min="1" max="7" value="${value}" id="${id}"/>
+          <span class="pill solid" id="${outId}">${value}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function surveySummaryLine(d){
+    const s = d.survey;
+    const dmg = s.damagesYesNo === "Yes" ? (s.damagesDescription ? ` (${s.damagesDescription})` : "") : "";
+    return `Got it — ${d.productName}. Outdoors ${s.usedOutdoors1to7}/7, performance ${s.performanceVsNew1to7}/7, cleanness ${s.cleanness1to7}/7, warranty ${s.warrantyActiveYesNo}, missing parts ${s.missingPartsYesNo}, damages ${s.damagesYesNo}${dmg}, urgency ${s.saleUrgency1to7}/7.`;
+  }
+
+  function renderChat(d){
+    const chatStarted = chatMessages.length>0;
+    const evalReady = followUpQs.length===3 && followUpAnswers.every(x=>String(x||"").trim());
+    const hasAI = !!aiResult;
+    const hasSavedPrice = hasAI && Number(d.sellerPrice)>0;
+
+    return `
+      <div class="card pad">
+        <div class="row" style="align-items:center;justify-content:space-between">
+          <div>
+            <div class="h2">Step 3 · AI Pricing Chat</div>
+            <div class="help">Mock mode (works with no API keys). The assistant asks exactly 3 follow-ups.</div>
+          </div>
+          <span class="pill">AI Mode: <b>MOCK</b></span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="chatbox" id="chatbox">
+          <div class="grid" style="gap:10px">
+            ${chatMessages.length ? chatMessages.map(m=>`
+              <div class="bubble ${m.role}">${escapeHtml(m.content)}</div>
+            `).join("") : `
+              <div class="bubble assistant">Click “Start chat” to begin.</div>
+            `}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <button class="btn" id="backBtn">Back</button>
+          <div class="row">
+            <button class="btn" id="startChatBtn" ${chatStarted?"disabled":""}>Start chat</button>
+            <button class="btn" id="evalBtn" ${(!chatStarted || !evalReady || hasAI) ? "disabled":""}>Evaluate price</button>
+          </div>
+        </div>
+
+        ${chatStarted ? `
+          <div class="divider"></div>
+          <div class="row">
+            <div class="col">
+              <div class="label">Follow-up answer 1</div>
+              <input class="input" id="fu0" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[0]||"")}"/>
+            </div>
+            <div class="col">
+              <div class="label">Follow-up answer 2</div>
+              <input class="input" id="fu1" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[1]||"")}"/>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="col">
+              <div class="label">Follow-up answer 3</div>
+              <input class="input" id="fu2" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[2]||"")}"/>
+            </div>
+          </div>
+
+          ${hasAI ? `
+            <div class="divider"></div>
+            <div class="card pad" style="border-radius:16px;background:#fafafa">
+              <div class="small muted">Recommended: <b style="color:#111">${formatILS(aiResult.recommendedListPriceILS)}</b> · Quick sale: <b style="color:#111">${formatILS(aiResult.quickSalePriceILS)}</b></div>
+            </div>
+
+            <div style="margin-top:10px">
+              <div class="label">What price do you want to list it for? (₪)</div>
+              <div class="row">
+                <input class="input" id="sellerPrice" inputmode="numeric" placeholder="e.g., 550" value="${escapeHtml(d.sellerPrice||"")}"/>
+                <button class="btn primary" id="savePriceBtn">Save list price</button>
+              </div>
+              <div class="help">${hasSavedPrice ? "Saved — continue to Review." : "After saving, you can continue."}</div>
+            </div>
+          ` : ``}
+        ` : ``}
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="small muted">Complete: Start chat → answer 3 → evaluate → save your list price</span>
+          <button class="btn primary" id="nextBtn" ${hasSavedPrice ? "" : "disabled"}>Continue</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReview(d, ai){
+    return `
+      <div class="card pad">
+        <div class="h2">Step 4 · Review & Publish</div>
+        <div class="help">Publishing saves to localStorage and shows on the marketplace.</div>
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="col">
+            <img class="img" style="height:280px;border-radius:16px" src="${escapeHtml(d.photoBase64)}" alt="preview"/>
+          </div>
+          <div class="col">
+            <div class="card pad" style="border-radius:16px">
+              <div class="small muted">Product</div>
+              <div class="h1" style="margin-top:6px">${escapeHtml(d.productName)}</div>
+              <div class="row" style="margin-top:10px">
+                <span class="pill solid">${escapeHtml(d.category)}</span>
+                <span class="pill">${escapeHtml(d.location || "Israel")}</span>
+              </div>
+            </div>
+
+            <div class="card pad" style="border-radius:16px;margin-top:10px">
+              <div class="small muted">Seller chosen list price</div>
+              <div class="h1" style="margin-top:6px">${formatILS(Number(d.sellerPrice||0))}</div>
+            </div>
+
+            <div class="card pad" style="border-radius:16px;margin-top:10px">
+              <div class="small muted">AI recommended</div>
+              ${ai ? `
+                <div class="h1" style="margin-top:6px">${formatILS(ai.recommendedListPriceILS)}</div>
+                <div class="small muted" style="margin-top:6px">Fair: ${formatILS(ai.estimatedRangeILS.low)}–${formatILS(ai.estimatedRangeILS.high)} · Quick: ${formatILS(ai.quickSalePriceILS)}</div>
+              ` : `<div class="warn">Missing AI results</div>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn" id="backBtn">Back</button>
+          <button class="btn primary" id="publishBtn">Publish</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function scrollChatToBottom(){
+    const el = document.getElementById("chatbox");
+    if(el) el.scrollTop = el.scrollHeight;
+  }
+}
+
+/* init */
+ensureSeeded();
+</script>
+</body>
+</html>
+
