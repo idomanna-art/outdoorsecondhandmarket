@@ -668,7 +668,12 @@ function renderPost(){
 
     // step 0 bindings
     const nameEl = document.getElementById("productName");
-    if(nameEl) nameEl.oninput = (e)=>{ draft.productName = e.target.value; render(); };
+if (nameEl) {
+  nameEl.oninput = (e) => {
+    draft.productName = e.target.value; // no re-render while typing
+  };
+}
+
 
     const catEl = document.getElementById("category");
     if(catEl) catEl.onchange = (e)=>{ draft.category = e.target.value; render(); };
@@ -989,7 +994,7 @@ function renderPost(){
     const chatStarted = chatMessages.length>0;
     const evalReady = followUpQs.length===3 && followUpAnswers.every(x=>String(x||"").trim());
     const hasAI = !!aiResult;
-    const hasSavedPrice = hasAI && Number(d.sellerPrice)>0;
+    const hasSavedPrice = !!d.ai && Number(d.sellerPrice) > 0;
 
     return `
       <div class="card pad">
