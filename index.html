@@ -159,7 +159,7 @@ function svgDataUri(label){
 function seedListings(){
   const now = new Date().toISOString();
   return [
-    mkSeed("seed-1", now, "Osprey Atmos 65 (Men)", "Backpacks", "Tel Aviv", 820, 850, {low:650,high:900},
+    mkSeed("seed-1", now, "Osprey Atmos 65 (Men)", "Backpacks", "Tel Aviv","assets/atmos.jpg", 820, 850, {low:650,high:900},
       {used:5, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
       [
         ["Brand/model and size?", "Osprey Atmos 65L, size M"],
@@ -167,7 +167,7 @@ function seedListings(){
         ["Original new price (₪)?", "About ₪1,250"]
       ]
     ),
-    mkSeed("seed-2", now, "MSR PocketRocket 2 Stove", "Stoves", "Haifa", 189, 190, {low:140,high:200},
+    mkSeed("seed-2", now, "MSR PocketRocket 2 Stove", "Stoves", "Haifa","assets/pocketrocket.jpg", 189, 190, {low:140,high:200},
       {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:4},
       [
         ["Brand/model and accessories?", "MSR PocketRocket 2, no extras"],
@@ -175,7 +175,7 @@ function seedListings(){
         ["Original new price (₪)?", "₪250–₪300"]
       ]
     ),
-    mkSeed("seed-3", now, "Naturehike Cloud Up 2 Tent", "Tents", "Beer Sheva", 349, 360, {low:260,high:380},
+    mkSeed("seed-3", now, "Naturehike Cloud Up 2 Tent", "Tents", "Beer Sheva","assets/cloudup2.jpg", 349, 360, {low:260,high:380},
       {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
       [
         ["Version + footprint included?", "20D version, includes footprint"],
@@ -183,7 +183,7 @@ function seedListings(){
         ["Original new price (₪)?", "₪550"]
       ]
     ),
-    mkSeed("seed-4", now, "The North Face Thermoball Jacket", "Jackets", "Ramat Gan", 399, 390, {low:260,high:420},
+    mkSeed("seed-4", now, "The North Face Thermoball Jacket", "Jackets", "Ramat Gan","assets/thermoball.jpg", 399, 390, {low:260,high:420},
       {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
       [
         ["Exact size?", "Men’s M"],
@@ -191,7 +191,7 @@ function seedListings(){
         ["Original new price (₪)?", "₪700"]
       ]
     ),
-    mkSeed("seed-5", now, "Decathlon Forclaz Trekking Poles (pair)", "Trekking poles", "Modiin", 110, 95, {low:70,high:120},
+    mkSeed("seed-5", now, "Decathlon Forclaz Trekking Poles (pair)", "Trekking poles", "Modiin","assets/poles.jpg" 110, 95, {low:70,high:120},
       {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:6},
       [
         ["Exact model + baskets included?", "Forclaz MT500, includes baskets"],
@@ -202,12 +202,13 @@ function seedListings(){
   ];
 }
 
-function mkSeed(id, createdAt, name, category, location, recPrice, listPrice, range, s, followUps){
+function mkSeed(id, createdAt, name, category, location, imageUrl, recPrice, listPrice, range, s, followUps){
+
   return {
     id, createdAt,
     productName:name,
     category, location,
-    photoBase64: svgDataUri(name),
+      photoBase64: imageUrl,
     survey: {
       usedOutdoors1to7:s.used,
       performanceVsNew1to7:s.perf,
