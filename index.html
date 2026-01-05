@@ -695,6 +695,20 @@ function renderPost(){
     draft.followUps = followUpQs.map((q, i) => ({ question: q, answer: trimmed[i] }));
     draft.ai = aiResult;
 
+    // Auto-set seller price to recommended if user didn't set one
+    if (!Number(draft.sellerPrice)) {
+      draft.sellerPrice = String(aiResult.recommendedListPriceILS);
+    }
+  }
+
+  // Normal validation + move forward
+  const err = validateStep(step, draft, aiResult);
+  if (err) { alert(err); return; }
+
+  step = Math.min(steps.length - 1, step + 1);
+  render();
+};
+
 
     const cancelBtn = document.getElementById("cancelBtn");
     if(cancelBtn) cancelBtn.onclick = () => { location.hash = "#home"; };
