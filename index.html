@@ -3,212 +3,324 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Outdoor Gear Marketplace (Demo) — Israel ₪</title>
+  <title>Outdoor Gear Marketplace (Demo)</title>
   <style>
     :root{
-      --bg:#fafafa; --card:#fff; --text:#111; --muted:#666; --border:#e5e5e5;
+      --bg:#fafafa; --card:#fff; --text:#111; --muted:#666; --border:#e7e7e7;
       --accent:#111; --accent2:#f3f3f3; --ok:#0a7; --warn:#c60;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      --radius:18px;
+      --shadow: 0 1px 0 rgba(0,0,0,.03);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-    body{ margin:0; background:var(--bg); color:var(--text); }
-    header{ background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:5; }
-    .wrap{ max-width:980px; margin:0 auto; padding:16px; }
-    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-    .brand{ display:flex; gap:10px; align-items:center; }
-    .logo{ width:36px; height:36px; border-radius:12px; background:#111; }
-    .btn{ border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:14px; cursor:pointer; font-weight:600; }
-    .btn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); }
-    .btn:disabled{ opacity:.5; cursor:not-allowed; }
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:14px; }
-    .grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
-    @media (max-width: 900px){ .grid{ grid-template-columns: repeat(2, 1fr);} }
-    @media (max-width: 620px){ .grid{ grid-template-columns: 1fr;} }
-    .pill{ display:inline-block; padding:4px 10px; border-radius:999px; background:var(--accent2); color:var(--muted); font-size:12px; font-weight:600; }
-    .muted{ color:var(--muted); }
-    .title{ font-size:18px; font-weight:800; }
-    .h1{ font-size:22px; font-weight:900; margin:0; }
-    input, select, textarea{
-      width:100%; padding:10px 12px; border-radius:14px; border:1px solid var(--border);
-      font-size:14px; background:#fff; box-sizing:border-box;
+    body{margin:0;background:var(--bg);color:var(--text);}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    header{
+      position:sticky;top:0;z-index:5;background:rgba(255,255,255,.9);
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid var(--border);
     }
-    textarea{ min-height:86px; resize:vertical; }
-    label{ font-size:12px; font-weight:800; color:var(--muted); display:block; margin-bottom:6px; }
-    .two{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    @media (max-width: 700px){ .two{ grid-template-columns:1fr; } }
-    .hidden{ display:none !important; }
-    .hr{ height:1px; background:var(--border); margin:12px 0; }
-    .img{ width:100%; height:160px; object-fit:cover; border-radius:16px; border:1px solid var(--border); background:#eee; }
-    .small{ font-size:12px; }
-    .chatbox{ height:220px; overflow:auto; border:1px solid var(--border); border-radius:16px; padding:10px; background:#fff; }
-    .msg{ max-width:85%; padding:10px 12px; border-radius:16px; margin:8px 0; white-space:pre-line; font-size:14px; }
-    .msg.a{ background:var(--accent2); }
-    .msg.u{ background:var(--accent); color:#fff; margin-left:auto; }
-    .notice{ background:#fff7e6; border:1px solid #ffe1a6; color:#7a4c00; padding:10px 12px; border-radius:16px; }
-    .ok{ background:#eafff6; border:1px solid #baf0d8; color:#065f46; padding:10px 12px; border-radius:16px; }
-    .link{ color:#111; text-decoration:underline; cursor:pointer; }
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:38px;height:38px;border-radius:14px;background:var(--accent)}
+    .brand b{font-size:14px}
+    .brand small{display:block;color:var(--muted);font-size:12px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border:1px solid var(--border);
+      background:var(--card);
+      padding:10px 14px;border-radius:14px;
+      font-weight:600;font-size:13px;
+      box-shadow: var(--shadow);
+      cursor:pointer;
+    }
+    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn.ghost{background:transparent;border-color:transparent;box-shadow:none}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:#fff;color:var(--muted)}
+    .pill.solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .grid{display:grid;gap:14px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card.pad{padding:16px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row.nowrap{flex-wrap:nowrap}
+    .col{flex:1;min-width:220px}
+    .muted{color:var(--muted)}
+    .h1{font-size:18px;font-weight:800}
+    .h2{font-size:14px;font-weight:800}
+    .small{font-size:12px}
+    .input, select, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      background:#fff;
+      outline:none;
+    }
+    textarea{min-height:90px;resize:vertical}
+    .label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px}
+    .help{font-size:12px;color:var(--muted);margin-top:6px}
+    .divider{height:1px;background:var(--border);margin:12px 0}
+    .cards{display:grid;gap:14px;grid-template-columns:repeat(1, minmax(0,1fr))}
+    @media(min-width:700px){ .cards{grid-template-columns:repeat(2, minmax(0,1fr))}}
+    @media(min-width:980px){ .cards{grid-template-columns:repeat(3, minmax(0,1fr))}}
+    .listing{
+      overflow:hidden; transition:.15s transform ease, .15s box-shadow ease;
+    }
+    .listing:hover{transform:translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.06)}
+    .img{width:100%;height:170px;object-fit:cover;display:block;background:#ddd}
+    .pad16{padding:14px}
+    .kvs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .kv{background:#fafafa;border:1px solid var(--border);border-radius:14px;padding:10px}
+    .kv b{display:block;font-size:14px}
+    .kv small{color:var(--muted)}
+    .stepper{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .step{display:flex;align-items:center;gap:8px}
+    .dot{
+      width:26px;height:26px;border-radius:999px;display:grid;place-items:center;
+      font-size:12px;font-weight:800;background:#f2f2f2;color:#777;border:1px solid var(--border)
+    }
+    .dot.active{background:rgba(17,17,17,.08);color:#111;border-color:rgba(17,17,17,.12)}
+    .dot.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .chatbox{max-height:320px;overflow:auto;border-radius:16px;border:1px solid var(--border);background:#fff;padding:12px}
+    .bubble{max-width:85%;padding:10px 12px;border-radius:16px;font-size:13px;white-space:pre-line}
+    .bubble.assistant{background:#f3f3f3;color:#111}
+    .bubble.user{background:#111;color:#fff;margin-left:auto}
+    .warn{color:var(--warn);font-weight:700}
+    footer{margin-top:24px;border-top:1px solid var(--border);background:#fff}
   </style>
 </head>
 <body>
 <header>
-  <div class="wrap">
+  <div class="wrap topbar">
+    <a class="brand" href="#home">
+      <div class="logo"></div>
+      <div>
+        <b>Outdoor Gear</b>
+        <small>Marketplace · Demo (₪) · localStorage</small>
+      </div>
+    </a>
     <div class="row">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <div style="font-weight:900;">Outdoor Gear Marketplace</div>
-          <div class="small muted">Demo · Israel · Currency ₪ · localStorage (no database)</div>
-        </div>
-      </div>
-      <div class="row">
-        <button class="btn" id="btnHome">Home</button>
-        <button class="btn primary" id="btnPost">Post an item</button>
-      </div>
+      <a class="btn" href="#post">Post an item</a>
     </div>
   </div>
 </header>
 
-<div class="wrap" id="app"></div>
+<main class="wrap">
+  <div id="app"></div>
+</main>
+
+<footer>
+  <div class="wrap small muted">
+    Demo only · No database · Data saved in your browser (localStorage) · Currency: ILS (₪)
+  </div>
+</footer>
 
 <script>
-/*** =========================
-  Simple demo marketplace:
-  - One file
-  - localStorage listings
-  - Mock AI pricing assistant
-========================= ***/
+/* =========================
+   Simple demo marketplace
+   - One file, no build
+   - Hash routes: #home, #post, #listing/<id>
+   ========================= */
 
-const LS_KEY = "ogm_demo_listings_v1";
+const STORAGE_KEY = "ogm_demo_listings_v1";
 
 const CATEGORIES = ["Backpacks","Tents","Sleeping bags","Shoes","Jackets","Stoves","Trekking poles","Other"];
 
-function fmtILS(n){
-  const x = Math.round(Number(n)||0);
-  return "₪" + x.toLocaleString("en-US");
-}
-function nanoid(){
-  return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
-}
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function placeholderImg(label){
-  const svg = encodeURIComponent(`
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function formatILS(n){ const x = Math.round(Number(n)||0); return "₪" + x.toLocaleString("en-US"); }
+function nanoid(){ return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16); }
+
+function svgDataUri(label){
+  const safe = escapeHtml(label);
+  const svg = `
   <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
-    <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#111"/><stop offset="100%" stop-color="#666"/>
-    </linearGradient></defs>
+    <defs>
+      <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#111"/>
+        <stop offset="100%" stop-color="#555"/>
+      </linearGradient>
+    </defs>
     <rect width="1200" height="800" fill="url(#g)"/>
-    <text x="70" y="700" font-family="Arial" font-size="56" fill="rgba(255,255,255,0.88)">${escapeHtml(label)}</text>
-    <text x="70" y="760" font-family="Arial" font-size="26" fill="rgba(255,255,255,0.6)">Demo image</text>
-  </svg>`);
-  return "data:image/svg+xml;charset=utf-8," + svg;
+    <circle cx="260" cy="300" r="120" fill="rgba(255,255,255,0.08)"/>
+    <circle cx="980" cy="220" r="160" fill="rgba(255,255,255,0.06)"/>
+    <text x="80" y="720" font-family="Arial" font-size="56" fill="rgba(255,255,255,0.86)">${safe}</text>
+    <text x="80" y="780" font-family="Arial" font-size="26" fill="rgba(255,255,255,0.6)">Demo image</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
+function seedListings(){
+  const now = new Date().toISOString();
+  return [
+    mkSeed("seed-1", now, "Osprey Atmos 65 (Men)", "Backpacks", "Tel Aviv", 820, 850, {low:650,high:900},
+      {used:5, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
+      [
+        ["Brand/model and size?", "Osprey Atmos 65L, size M"],
+        ["Approx age / purchase year?", "Bought in 2022"],
+        ["Original new price (₪)?", "About ₪1,250"]
+      ]
+    ),
+    mkSeed("seed-2", now, "MSR PocketRocket 2 Stove", "Stoves", "Haifa", 189, 190, {low:140,high:200},
+      {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:4},
+      [
+        ["Brand/model and accessories?", "MSR PocketRocket 2, no extras"],
+        ["Approx age / purchase year?", "2021"],
+        ["Original new price (₪)?", "₪250–₪300"]
+      ]
+    ),
+    mkSeed("seed-3", now, "Naturehike Cloud Up 2 Tent", "Tents", "Beer Sheva", 349, 360, {low:260,high:380},
+      {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
+      [
+        ["Version + footprint included?", "20D version, includes footprint"],
+        ["Approx age / purchase year?", "2022"],
+        ["Original new price (₪)?", "₪550"]
+      ]
+    ),
+    mkSeed("seed-4", now, "The North Face Thermoball Jacket", "Jackets", "Ramat Gan", 399, 390, {low:260,high:420},
+      {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
+      [
+        ["Exact size?", "Men’s M"],
+        ["Approx age / purchase year?", "2021"],
+        ["Original new price (₪)?", "₪700"]
+      ]
+    ),
+    mkSeed("seed-5", now, "Decathlon Forclaz Trekking Poles (pair)", "Trekking poles", "Modiin", 110, 95, {low:70,high:120},
+      {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:6},
+      [
+        ["Exact model + baskets included?", "Forclaz MT500, includes baskets"],
+        ["Approx age / purchase year?", "2024"],
+        ["Original new price (₪)?", "₪180"]
+      ]
+    )
+  ];
+}
+
+function mkSeed(id, createdAt, name, category, location, recPrice, listPrice, range, s, followUps){
+  return {
+    id, createdAt,
+    productName:name,
+    category, location,
+    photoBase64: svgDataUri(name),
+    survey: {
+      usedOutdoors1to7:s.used,
+      performanceVsNew1to7:s.perf,
+      cleanness1to7:s.clean,
+      warrantyActiveYesNo:s.warr,
+      missingPartsYesNo:s.miss,
+      damagesYesNo:s.dmg,
+      damagesDescription:s.dmgText,
+      saleUrgency1to7:s.urg,
+      productName:name
+    },
+    followUps: followUps.map(([q,a])=>({question:q, answer:a})),
+    ai: {
+      estimatedRangeILS: range,
+      recommendedListPriceILS: recPrice,
+      quickSalePriceILS: Math.max(20, recPrice - 60),
+      explanation: "Seeded demo listing. In real use, the assistant references your survey + follow-ups to estimate fair pricing in Israel.",
+      negotiationTips: `List at ${formatILS(recPrice)}. Accept slightly lower depending on interest.`
+    },
+    sellerChosenListPriceILS: listPrice
+  };
 }
 
 function loadListings(){
   try{
-    const raw = localStorage.getItem(LS_KEY);
-    const arr = raw ? JSON.parse(raw) : null;
-    return Array.isArray(arr) ? arr : [];
-  }catch{ return []; }
-}
-function saveListings(list){
-  localStorage.setItem(LS_KEY, JSON.stringify(list));
-}
-function ensureSeed(){
-  const existing = loadListings();
-  if(existing.length) return;
-  const now = new Date().toISOString();
-  const seed = [
-    seedListing("Osprey Atmos 65 Backpack","Backpacks","Tel Aviv", now, 5,6,5,"No","No","No","",3, 650,900,820,720, 850),
-    seedListing("MSR PocketRocket 2 Stove","Stoves","Haifa", now, 3,6,6,"No","No","No","",4, 140,200,189,165, 190),
-    seedListing("Naturehike Cloud Up 2 Tent","Tents","Beer Sheva", now, 4,5,5,"No","No","No","",2, 260,380,349,299, 360),
-    seedListing("TNF Thermoball Jacket (Men M)","Jackets","Ramat Gan", now, 3,6,6,"No","No","No","",3, 260,420,399,330, 390),
-    seedListing("Decathlon MT500 Trekking Poles","Trekking poles","Modiin", now, 4,5,5,"No","No","No","",6, 70,120,110,85, 95),
-  ];
-  saveListings(seed);
-}
-function seedListing(name, category, location, createdAt, used, perf, clean, war, miss, dmg, dmgDesc, urg, low, high, rec, quick, seller){
-  return {
-    id: "seed-" + nanoid(),
-    createdAt,
-    productName: name,
-    category,
-    location,
-    photoBase64: placeholderImg(name),
-    survey: {
-      usedOutdoors1to7: used,
-      performanceVsNew1to7: perf,
-      cleanness1to7: clean,
-      warrantyActiveYesNo: war,
-      missingPartsYesNo: miss,
-      damagesYesNo: dmg,
-      damagesDescription: dmgDesc,
-      saleUrgency1to7: urg,
-      productName: name
-    },
-    followUps: [
-      {question:"Brand/model and size/spec?", answer:"Demo answer"},
-      {question:"Approx age / purchase year?", answer:"Demo answer"},
-      {question:"Original new price (approx) ₪?", answer:"Demo answer"}
-    ],
-    ai: {
-      estimatedRangeILS: {low, high},
-      recommendedListPriceILS: rec,
-      quickSalePriceILS: quick,
-      explanation: "Seed demo listing. Condition + category demand used to estimate ₪ range.",
-      negotiationTips: `List at ₪${rec}. Accept slightly lower. Quick sale ₪${quick}.`
-    },
-    sellerChosenListPriceILS: seller
-  };
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : null;
+  }catch{ return null; }
 }
 
-/*** ====== Mock AI pricing assistant ====== **/
+function saveListings(listings){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+}
+
+function ensureSeeded(){
+  const existing = loadListings();
+  if(existing && existing.length) return;
+  saveListings(seedListings());
+}
+
+function getById(id){
+  const all = loadListings() || [];
+  return all.find(x=>x.id===id) || null;
+}
+
+function upsertListing(listing){
+  const all = loadListings() || [];
+  const idx = all.findIndex(x=>x.id===listing.id);
+  if(idx>=0) all[idx]=listing;
+  else all.unshift(listing);
+  saveListings(all);
+}
+
+function resetDemo(){
+  localStorage.removeItem(STORAGE_KEY);
+  ensureSeeded();
+}
+
+/* ===== Mock pricing assistant ===== */
+
 function baseNewPriceBucket(category){
   switch(category){
-    case "Backpacks": return [700,1500];
-    case "Tents": return [450,1600];
-    case "Sleeping bags": return [400,1400];
-    case "Shoes": return [400,900];
-    case "Jackets": return [350,1200];
-    case "Stoves": return [180,550];
-    case "Trekking poles": return [140,500];
-    default: return [300,900];
+    case "Backpacks": return {low:700, high:1500};
+    case "Tents": return {low:450, high:1600};
+    case "Sleeping bags": return {low:400, high:1400};
+    case "Shoes": return {low:400, high:900};
+    case "Jackets": return {low:350, high:1200};
+    case "Stoves": return {low:180, high:550};
+    case "Trekking poles": return {low:140, high:500};
+    default: return {low:300, high:900};
   }
 }
-function round10(n){ return Math.round(n/10)*10; }
-function clamp(min,v,max){ return Math.max(min, Math.min(max,v)); }
+
+function generateFollowUps(draft){
+  const s = draft.survey;
+  const q1 = "Brand + exact model + size/spec (if relevant)?";
+  const q2 = (s.warrantyActiveYesNo === "Yes")
+    ? "When does the warranty expire (approx), and do you have proof of purchase?"
+    : "Approx age / purchase year?";
+  const q3 = (s.damagesYesNo === "Yes")
+    ? "How does the damage affect function (cosmetic only vs performance), and was it repaired?"
+    : "What was the original new price (approx) in ₪ (or your best estimate)?";
+  return [q1,q2,q3];
+}
+
 function extractNumber(text){
   const m = String(text).replace(/,/g,"").match(/(\d{2,5})/);
   if(!m) return null;
   const n = Number(m[1]);
   return Number.isFinite(n) ? n : null;
 }
-function generateFollowUps(draft){
-  const s = draft.survey;
-  const q1 = "Brand + exact model + size/spec (if relevant)?";
-  const q2 = (s.warrantyActiveYesNo==="Yes")
-    ? "When does the warranty expire (approx), and do you have proof of purchase?"
-    : "Approx age / purchase year?";
-  const q3 = (s.damagesYesNo==="Yes")
-    ? "How does the damage affect function (cosmetic only vs performance), and was it repaired?"
-    : "What was the original new price (approx) in ₪ (or a rough new-price estimate)?";
-  return [q1,q2,q3];
-}
-function evaluateMock(draft, answers3){
-  const s = draft.survey;
-  const [lowB, highB] = baseNewPriceBucket(draft.category);
-  let newMid = (lowB + highB)/2;
 
-  const maybe = extractNumber(answers3.join(" "));
-  if(maybe && maybe>=80 && maybe<=10000){
+function clamp(min,v,max){ return Math.max(min, Math.min(max,v)); }
+function round10(n){ return Math.round(n/10)*10; }
+
+function evaluatePrice(draft, answers){
+  const s = draft.survey;
+  const bucket = baseNewPriceBucket(draft.category);
+  let newMid = (bucket.low + bucket.high)/2;
+
+  // if user typed an original price, blend it in:
+  const maybe = extractNumber(answers.join(" "));
+  if(maybe && maybe >= 80 && maybe <= 10000){
     newMid = 0.65*maybe + 0.35*newMid;
   }
 
-  // used ratio baseline
+  // used ratio baseline and adjustments
   let usedRatio = 0.55;
-  const usePenalty = (s.usedOutdoors1to7 - 1)/6; // 0..1
-  const perfBoost = (s.performanceVsNew1to7 - 1)/6;
-  const cleanBoost = (s.cleanness1to7 - 1)/6;
+  const usePenalty = (s.usedOutdoors1to7-1)/6;
+  const perfBoost = (s.performanceVsNew1to7-1)/6;
+  const cleanBoost = (s.cleanness1to7-1)/6;
 
   usedRatio -= 0.18*usePenalty;
   usedRatio += 0.10*perfBoost;
@@ -226,235 +338,265 @@ function evaluateMock(draft, answers3){
   const fairLow = fairMid * (0.88 - 0.08*urgency01);
   const fairHigh = fairMid * (1.12 - 0.04*urgency01);
 
-  const rec = fairMid * (1.04 - 0.10*urgency01);
-  const quick = fairMid * (0.90 - 0.12*urgency01);
+  const recommended = fairMid * (1.04 - 0.10*urgency01);
+  const quickSale = fairMid * (0.90 - 0.12*urgency01);
 
   const low = round10(Math.max(20,fairLow));
   const high = round10(Math.max(low+20,fairHigh));
-  const recommended = round10(clamp(low, rec, high));
-  const quickSale = round10(clamp(20, quick, recommended));
+  const rec = round10(clamp(low,recommended,high));
+  const quick = round10(clamp(20,quickSale,rec));
 
   const explanation =
 `Pricing basis: Israeli used-market estimate in ₪ for category "${draft.category}".
-Condition factors:
+Survey factors:
 - Used outdoors: ${s.usedOutdoors1to7}/7
 - Performance vs new: ${s.performanceVsNew1to7}/7
 - Cleanness: ${s.cleanness1to7}/7
 - Warranty: ${s.warrantyActiveYesNo}
 - Missing parts: ${s.missingPartsYesNo}
-- Damages: ${s.damagesYesNo}${(s.damagesYesNo==="Yes" && s.damagesDescription)? " ("+s.damagesDescription+")":""}
+- Damages: ${s.damagesYesNo}${s.damagesYesNo==="Yes" && s.damagesDescription ? " ("+s.damagesDescription+")" : ""}
 - Sale urgency: ${s.saleUrgency1to7}/7
 
-Follow-ups considered:
-1) ${answers3[0]}
-2) ${answers3[1]}
-3) ${answers3[2]}
+Follow-ups:
+1) ${answers[0]}
+2) ${answers[1]}
+3) ${answers[2]}
 
-Result: fair range and recommended listing price optimized for urgency.`;
+Result: fair range + recommended price optimized for urgency.`;
 
   const tips =
-`List at ₪${recommended}.
-Be ready to accept ₪${Math.max(20,recommended-40)}–₪${Math.max(20,recommended-80)} depending on interest.
-If you want a faster sale, post ₪${quickSale} and keep the description honest + clear.`;
+`List at ${formatILS(rec)}.
+Be ready to accept ${formatILS(Math.max(20,rec-40))}–${formatILS(Math.max(20,rec-80))} depending on interest.
+If you want it gone fast, post ${formatILS(quick)} and keep the description honest + clear.`;
 
   return {
-    estimatedRangeILS: {low, high},
-    recommendedListPriceILS: recommended,
-    quickSalePriceILS: quickSale,
+    estimatedRangeILS:{low,high},
+    recommendedListPriceILS:rec,
+    quickSalePriceILS:quick,
     explanation,
-    negotiationTips: tips
+    negotiationTips:tips
   };
 }
 
-/*** ====== UI rendering (simple router) ====== **/
+/* ====== UI / ROUTER ====== */
+
 const app = document.getElementById("app");
-document.getElementById("btnHome").onclick = () => goHome();
-document.getElementById("btnPost").onclick = () => goPost();
 
-function goHome(){
-  ensureSeed();
-  const list = loadListings();
-  const html = `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div class="h1">Marketplace</div>
-          <div class="muted small">Demo: seeded listings + your listings saved in this browser.</div>
-        </div>
-        <div class="row">
-          <button class="btn" id="resetBtn">Reset demo data</button>
-          <button class="btn primary" id="goPostBtn">Post an item</button>
-        </div>
-      </div>
+function route(){
+  ensureSeeded();
+  const hash = location.hash || "#home";
+  if(hash.startsWith("#listing/")){
+    const id = hash.slice("#listing/".length);
+    renderListing(id);
+    return;
+  }
+  if(hash === "#post"){ renderPost(); return; }
+  renderHome();
+}
 
-      <div class="hr"></div>
+window.addEventListener("hashchange", route);
+window.addEventListener("load", route);
 
-      <div class="two">
-        <div>
-          <label>Search</label>
-          <input id="q" placeholder="Search by product name…" />
-        </div>
-        <div>
-          <label>Category</label>
-          <select id="cat">
-            <option value="All">All</option>
-            ${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}
-          </select>
-        </div>
-      </div>
-    </div>
+function renderHome(){
+  const all = loadListings() || [];
+  const state = { q:"", cat:"All" };
 
-    <div style="height:12px"></div>
-
-    <div id="grid" class="grid"></div>
-
-    <div style="height:12px"></div>
-    <div class="card notice">
-      <b>Professor note:</b> This is a demo. Listings you add are stored in your browser (localStorage). Seed listings appear for everyone.
-    </div>
-  `;
-  app.innerHTML = html;
-
-  const grid = document.getElementById("grid");
-  const q = document.getElementById("q");
-  const cat = document.getElementById("cat");
-
-  function render(){
-    const qq = q.value.trim().toLowerCase();
-    const cc = cat.value;
-    const filtered = list.filter(l=>{
+  const view = () => {
+    const qq = state.q.trim().toLowerCase();
+    const filtered = all.filter(l=>{
       const okQ = qq ? l.productName.toLowerCase().includes(qq) : true;
-      const okC = (cc==="All") ? true : l.category===cc;
+      const okC = state.cat==="All" ? true : l.category===state.cat;
       return okQ && okC;
     });
 
-    grid.innerHTML = filtered.map(l=>`
-      <div class="card" style="cursor:pointer" data-id="${l.id}">
-        <img class="img" src="${l.photoBase64}" alt="${escapeHtml(l.productName)}" />
-        <div style="margin-top:10px" class="title">${escapeHtml(l.productName)}</div>
-        <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
-          <span class="pill">${escapeHtml(l.category)}</span>
-          <span class="pill">${escapeHtml(l.location)}</span>
+    app.innerHTML = `
+      <div class="grid">
+        <div class="card pad">
+          <div class="row" style="align-items:flex-end;justify-content:space-between">
+            <div>
+              <div class="h1">Marketplace</div>
+              <div class="muted small">Browse used outdoor gear in Israel. Demo uses localStorage (no database). Prices in ₪.</div>
+            </div>
+            <div class="row">
+              <button class="btn" id="resetBtn">Reset demo data</button>
+              <a class="btn primary" href="#post">Post an item</a>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div class="col">
+              <div class="label">Search</div>
+              <input class="input" id="q" placeholder="Search by product name…" value="${escapeHtml(state.q)}"/>
+            </div>
+            <div class="col" style="max-width:260px">
+              <div class="label">Category</div>
+              <select class="input" id="cat">
+                ${["All",...CATEGORIES].map(c=>`<option ${c===state.cat?"selected":""}>${escapeHtml(c)}</option>`).join("")}
+              </select>
+            </div>
+          </div>
         </div>
-        <div style="margin-top:10px" class="row">
-          <div class="small muted">AI rec.</div>
-          <div style="font-weight:900">${fmtILS(l.ai.recommendedListPriceILS)}</div>
-        </div>
-        <div class="row small muted" style="margin-top:8px">
-          <div>Urgency: <b>${l.survey.saleUrgency1to7}</b>/7</div>
-          <div>Listed: <b>${l.sellerChosenListPriceILS? fmtILS(l.sellerChosenListPriceILS): "—"}</b></div>
+
+        ${filtered.length===0 ? `
+          <div class="card pad">
+            <div class="h2">No results</div>
+            <div class="muted small">Try a different search or category.</div>
+          </div>
+        ` : `
+          <div class="cards">
+            ${filtered.map(l=>listingCard(l)).join("")}
+          </div>
+        `}
+
+        <div class="card pad">
+          <div class="h2">Professor note</div>
+          <div class="small muted" style="margin-top:6px">
+            This is a demo. Listings you create are saved only in your browser (localStorage). Seeded listings appear for everyone.
+          </div>
         </div>
       </div>
-    `).join("");
+    `;
 
-    [...grid.querySelectorAll("[data-id]")].forEach(el=>{
-      el.onclick = ()=> goDetail(el.getAttribute("data-id"));
+    document.getElementById("q").addEventListener("input", (e)=>{ state.q = e.target.value; view(); });
+    document.getElementById("cat").addEventListener("change", (e)=>{ state.cat = e.target.value; view(); });
+    document.getElementById("resetBtn").addEventListener("click", ()=>{
+      resetDemo();
+      location.reload();
     });
-
-    if(!filtered.length){
-      grid.innerHTML = `<div class="card"><b>No results.</b> Try another search/category.</div>`;
-    }
-  }
-
-  render();
-  q.oninput = render;
-  cat.onchange = render;
-
-  document.getElementById("goPostBtn").onclick = ()=>goPost();
-  document.getElementById("resetBtn").onclick = ()=>{
-    localStorage.removeItem(LS_KEY);
-    ensureSeed();
-    goHome();
   };
+
+  view();
 }
 
-function goDetail(id){
-  const list = loadListings();
-  const l = list.find(x=>x.id===id);
-  if(!l){ app.innerHTML = `<div class="card"><b>Listing not found.</b> <span class="link" id="back">Back</span></div>`; document.getElementById("back").onclick=goHome; return; }
-
-  app.innerHTML = `
-    <div class="two">
-      <div class="card">
-        <img class="img" style="height:320px" src="${l.photoBase64}" alt="${escapeHtml(l.productName)}" />
-        <div style="margin-top:12px" class="row">
-          <div>
-            <div class="h1">${escapeHtml(l.productName)}</div>
-            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
-              <span class="pill">${escapeHtml(l.category)}</span>
-              <span class="pill">${escapeHtml(l.location)}</span>
-            </div>
-          </div>
-          <button class="btn" id="backBtn">Back</button>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="two">
-          <div class="card">
-            <div class="small muted">Seller list price</div>
-            <div style="font-weight:900; font-size:18px">${l.sellerChosenListPriceILS ? fmtILS(l.sellerChosenListPriceILS) : "Not set"}</div>
-          </div>
-          <div class="card">
-            <div class="small muted">AI recommended</div>
-            <div style="font-weight:900; font-size:18px">${fmtILS(l.ai.recommendedListPriceILS)}</div>
-            <div class="small muted">Fair: ${fmtILS(l.ai.estimatedRangeILS.low)}–${fmtILS(l.ai.estimatedRangeILS.high)}</div>
+function listingCard(l){
+  return `
+  <a class="card listing" href="#listing/${encodeURIComponent(l.id)}">
+    <img class="img" src="${escapeHtml(l.photoBase64)}" alt="${escapeHtml(l.productName)}"/>
+    <div class="pad16">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="h2">${escapeHtml(l.productName)}</div>
+          <div class="row" style="margin-top:6px">
+            <span class="pill solid">${escapeHtml(l.category)}</span>
+            <span class="pill">${escapeHtml(l.location)}</span>
           </div>
         </div>
-
-        <div style="height:10px"></div>
-
-        <div class="two">
-          <div class="card">
-            <b>Survey snapshot</b>
-            <div class="small muted" style="margin-top:8px; line-height:1.6">
-              Used outdoors: <b>${l.survey.usedOutdoors1to7}</b>/7<br/>
-              Performance vs new: <b>${l.survey.performanceVsNew1to7}</b>/7<br/>
-              Cleanness: <b>${l.survey.cleanness1to7}</b>/7<br/>
-              Warranty: <b>${l.survey.warrantyActiveYesNo}</b><br/>
-              Missing parts: <b>${l.survey.missingPartsYesNo}</b><br/>
-              Damages: <b>${l.survey.damagesYesNo}</b>${l.survey.damagesYesNo==="Yes" && l.survey.damagesDescription ? `<div class="notice" style="margin-top:8px">${escapeHtml(l.survey.damagesDescription)}</div>`:""}<br/>
-              Urgency: <b>${l.survey.saleUrgency1to7}</b>/7
-            </div>
-          </div>
-          <div class="card">
-            <b>AI explanation</b>
-            <div class="small" style="margin-top:8px; white-space:pre-line">${escapeHtml(l.ai.explanation)}</div>
-            <div class="hr"></div>
-            <b>Negotiation tips</b>
-            <div class="small" style="margin-top:8px; white-space:pre-line">${escapeHtml(l.ai.negotiationTips)}</div>
-          </div>
+        <div style="text-align:right">
+          <div class="small muted">AI rec.</div>
+          <div style="font-weight:900">${formatILS(l.ai.recommendedListPriceILS)}</div>
         </div>
       </div>
 
-      <div class="card">
-        <b>Follow-up answers</b>
-        <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
-          ${l.followUps.map((qa,i)=>`
-            <div class="card">
-              <div class="small muted">Q${i+1}</div>
-              <div style="font-weight:800; margin-top:4px;">${escapeHtml(qa.question)}</div>
-              <div class="small" style="margin-top:6px">${escapeHtml(qa.answer)}</div>
+      <div class="row" style="justify-content:space-between;margin-top:10px">
+        <div class="small muted">Urgency: <b style="color:#111">${l.survey.saleUrgency1to7}</b>/7</div>
+        <div class="small muted">Listed: <b style="color:#111">${l.sellerChosenListPriceILS ? formatILS(l.sellerChosenListPriceILS) : "—"}</b></div>
+      </div>
+    </div>
+  </a>`;
+}
+
+function renderListing(id){
+  const listing = getById(decodeURIComponent(id));
+  if(!listing){
+    app.innerHTML = `
+      <div class="card pad">
+        <div class="h2">Listing not found</div>
+        <div class="muted small">It may have been removed from localStorage.</div>
+        <div class="divider"></div>
+        <a class="btn" href="#home">Back to marketplace</a>
+      </div>
+    `;
+    return;
+  }
+
+  const s = listing.survey;
+  app.innerHTML = `
+    <div class="grid" style="grid-template-columns:1fr;gap:14px">
+      <div class="row" style="gap:14px">
+        <div class="card" style="flex:1;min-width:320px">
+          <img class="img" style="height:320px" src="${escapeHtml(listing.photoBase64)}" alt="${escapeHtml(listing.productName)}"/>
+          <div class="pad16">
+            <div class="row" style="align-items:center;justify-content:space-between">
+              <div>
+                <div class="h1">${escapeHtml(listing.productName)}</div>
+                <div class="row" style="margin-top:6px">
+                  <span class="pill solid">${escapeHtml(listing.category)}</span>
+                  <span class="pill">${escapeHtml(listing.location)}</span>
+                </div>
+              </div>
+              <a class="btn" href="#home">← Back</a>
             </div>
-          `).join("")}
+
+            <div class="divider"></div>
+
+            <div class="kvs">
+              <div class="kv">
+                <small>Seller list price</small>
+                <b>${listing.sellerChosenListPriceILS ? formatILS(listing.sellerChosenListPriceILS) : "Not set"}</b>
+              </div>
+              <div class="kv">
+                <small>AI recommended</small>
+                <b>${formatILS(listing.ai.recommendedListPriceILS)}</b>
+                <small>Fair: ${formatILS(listing.ai.estimatedRangeILS.low)}–${formatILS(listing.ai.estimatedRangeILS.high)}</small>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row">
+              <div class="col">
+                <div class="h2">Condition snapshot</div>
+                <div class="small" style="margin-top:8px">
+                  Used outdoors: <b>${s.usedOutdoors1to7}</b>/7<br/>
+                  Performance vs new: <b>${s.performanceVsNew1to7}</b>/7<br/>
+                  Cleanness: <b>${s.cleanness1to7}</b>/7<br/>
+                  Warranty active: <b>${s.warrantyActiveYesNo}</b><br/>
+                  Missing parts: <b>${s.missingPartsYesNo}</b><br/>
+                  Damages: <b>${s.damagesYesNo}</b>
+                  ${s.damagesYesNo==="Yes" && s.damagesDescription ? `<div class="help">${escapeHtml(s.damagesDescription)}</div>` : ""}
+                  <br/>
+                  Sale urgency: <b>${s.saleUrgency1to7}</b>/7
+                </div>
+              </div>
+              <div class="col">
+                <div class="h2">AI explanation</div>
+                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.explanation)}</div>
+                <div class="divider"></div>
+                <div class="h2">Negotiation tips</div>
+                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.negotiationTips)}</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="margin-top:12px" class="notice small">
-          Demo: data is stored in your browser (localStorage).
+
+        <div class="card pad" style="width:360px;max-width:100%">
+          <div class="h2">Follow-up answers</div>
+          <div class="help">The assistant asked exactly 3 questions.</div>
+          <div class="divider"></div>
+          <div class="grid">
+            ${(listing.followUps||[]).map((qa,i)=>`
+              <div class="card pad" style="border-radius:16px">
+                <div class="small muted">Q${i+1}</div>
+                <div class="h2" style="margin-top:6px">${escapeHtml(qa.question)}</div>
+                <div class="small" style="margin-top:8px">${escapeHtml(qa.answer)}</div>
+              </div>
+            `).join("")}
+          </div>
         </div>
       </div>
     </div>
   `;
-  document.getElementById("backBtn").onclick = goHome;
 }
 
-function goPost(){
-  // Step wizard: Basics -> Survey -> AI Chat -> Publish
-  let state = {
-    step: 1,
+function renderPost(){
+  // Wizard state
+  const draft = {
     productName: "",
-    category: "Backpacks",
+    category: CATEGORIES[0],
     location: "Israel",
-    photoBase64: placeholderImg("Upload a photo"),
+    photoBase64: svgDataUri("Your photo here"),
     survey: {
       usedOutdoors1to7: 4,
       performanceVsNew1to7: 5,
@@ -463,424 +605,591 @@ function goPost(){
       missingPartsYesNo: "No",
       damagesYesNo: "No",
       damagesDescription: "",
-      saleUrgency1to7: 4,
-      productName: ""
+      saleUrgency1to7: 4
     },
-    followUpsQ: [],
-    followUpsA: ["","",""],
+    followUps: [],
     ai: null,
     sellerPrice: ""
   };
 
-  function render(){
+  const steps = ["Basics","Survey","AI Chat","Review"];
+  let step = 0;
+
+  // Chat state
+  let chatMessages = [];
+  let followUpQs = [];
+  let followUpAnswers = ["","",""];
+  let aiResult = null;
+
+  const render = () => {
     app.innerHTML = `
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="h1">Post an item</div>
-            <div class="small muted">Step ${state.step}/4 · No database · Works offline after load</div>
-          </div>
-          <button class="btn" id="cancelBtn">Cancel</button>
-        </div>
-
-        <div class="hr"></div>
-
-        ${state.step===1 ? renderBasics() : ""}
-        ${state.step===2 ? renderSurvey() : ""}
-        ${state.step===3 ? renderChat() : ""}
-        ${state.step===4 ? renderPublish() : ""}
-
-      </div>
-    `;
-
-    document.getElementById("cancelBtn").onclick = goHome;
-
-    if(state.step===1) hookBasics();
-    if(state.step===2) hookSurvey();
-    if(state.step===3) hookChat();
-    if(state.step===4) hookPublish();
-  }
-
-  function renderBasics(){
-    return `
-      <div class="two">
-        <div>
-          <label>Name of the product</label>
-          <input id="pn" placeholder="e.g., Osprey Atmos 65 backpack" value="${escapeHtml(state.productName)}" />
-          <div class="small muted">Tip: Brand + model helps the price estimate.</div>
-        </div>
-        <div>
-          <label>Category</label>
-          <select id="cat">
-            ${CATEGORIES.map(c=>`<option value="${c}" ${state.category===c?"selected":""}>${c}</option>`).join("")}
-          </select>
-        </div>
-        <div>
-          <label>Location</label>
-          <input id="loc" value="${escapeHtml(state.location)}" />
-        </div>
-        <div>
-          <label>Photo (jpg/png)</label>
-          <input id="photo" type="file" accept="image/png,image/jpeg" />
-          <div class="small muted">Keep it small for a demo (localStorage).</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <img class="img" style="height:260px" id="preview" src="${state.photoBase64}" alt="preview"/>
-      </div>
-
-      <div class="hr"></div>
-      <div class="row">
-        <button class="btn" id="backBtn">Back</button>
-        <button class="btn primary" id="nextBtn">Continue</button>
-      </div>
-    `;
-  }
-
-  function hookBasics(){
-    const pn = document.getElementById("pn");
-    const cat = document.getElementById("cat");
-    const loc = document.getElementById("loc");
-    const photo = document.getElementById("photo");
-    const preview = document.getElementById("preview");
-
-    pn.oninput = ()=> { state.productName = pn.value; state.survey.productName = pn.value; };
-    cat.onchange = ()=> { state.category = cat.value; };
-    loc.oninput = ()=> { state.location = loc.value; };
-
-    photo.onchange = async ()=> {
-      const file = photo.files && photo.files[0];
-      if(!file) return;
-      if(file.size > 2_500_000){
-        alert("Image too large for this demo. Please choose a smaller file (<2.5MB).");
-        photo.value = "";
-        return;
-      }
-      const base64 = await fileToDataURL(file);
-      state.photoBase64 = base64;
-      preview.src = base64;
-    };
-
-    document.getElementById("backBtn").onclick = goHome;
-    document.getElementById("nextBtn").onclick = ()=>{
-      if(!state.productName.trim()) return alert("Please enter a product name.");
-      if(!state.photoBase64) return alert("Please add a photo.");
-      state.step = 2;
-      render();
-    };
-  }
-
-  function renderSurvey(){
-    const s = state.survey;
-    return `
-      <div class="two">
-        ${scoreField("Used outdoors (1–7)", "used", s.usedOutdoors1to7)}
-        ${scoreField("Performance vs new (1–7)", "perf", s.performanceVsNew1to7)}
-        ${scoreField("Cleanness (1–7)", "clean", s.cleanness1to7)}
-
-        <div>
-          <label>Warranty active</label>
-          <select id="war">
-            <option ${s.warrantyActiveYesNo==="Yes"?"selected":""}>Yes</option>
-            <option ${s.warrantyActiveYesNo==="No"?"selected":""}>No</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Missing parts?</label>
-          <select id="miss">
-            <option ${s.missingPartsYesNo==="No"?"selected":""}>No</option>
-            <option ${s.missingPartsYesNo==="Yes"?"selected":""}>Yes</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Damages?</label>
-          <select id="dmg">
-            <option ${s.damagesYesNo==="No"?"selected":""}>No</option>
-            <option ${s.damagesYesNo==="Yes"?"selected":""}>Yes</option>
-          </select>
-          <div id="dmgBox" class="${s.damagesYesNo==="Yes"?"":"hidden"}" style="margin-top:8px">
-            <label>Describe damages</label>
-            <textarea id="dmgDesc" placeholder="Describe…">${escapeHtml(s.damagesDescription||"")}</textarea>
-          </div>
-        </div>
-
-        ${scoreField("Sale urgency (1–7)", "urg", s.saleUrgency1to7)}
-
-        <div>
-          <label>Name of the product (read-only)</label>
-          <input value="${escapeHtml(state.productName)}" readonly />
-        </div>
-      </div>
-
-      <div class="hr"></div>
-      <div class="row">
-        <button class="btn" id="backBtn">Back</button>
-        <button class="btn primary" id="nextBtn">Continue to AI chat</button>
-      </div>
-    `;
-  }
-
-  function hookSurvey(){
-    const s = state.survey;
-
-    bindScore("used", v=> s.usedOutdoors1to7 = v);
-    bindScore("perf", v=> s.performanceVsNew1to7 = v);
-    bindScore("clean", v=> s.cleanness1to7 = v);
-    bindScore("urg", v=> s.saleUrgency1to7 = v);
-
-    const war = document.getElementById("war");
-    const miss = document.getElementById("miss");
-    const dmg = document.getElementById("dmg");
-    const dmgBox = document.getElementById("dmgBox");
-    const dmgDesc = ()=> document.getElementById("dmgDesc");
-
-    war.onchange = ()=> s.warrantyActiveYesNo = war.value;
-    miss.onchange = ()=> s.missingPartsYesNo = miss.value;
-    dmg.onchange = ()=>{
-      s.damagesYesNo = dmg.value;
-      if(s.damagesYesNo==="Yes") dmgBox.classList.remove("hidden");
-      else dmgBox.classList.add("hidden");
-    };
-
-    document.getElementById("backBtn").onclick = ()=>{ state.step = 1; render(); };
-    document.getElementById("nextBtn").onclick = ()=>{
-      if(s.damagesYesNo==="Yes"){
-        const txt = (dmgDesc()?.value||"").trim();
-        if(!txt) return alert("Please describe the damages.");
-        s.damagesDescription = txt;
-      } else {
-        s.damagesDescription = "";
-      }
-      state.step = 3;
-      render();
-    };
-  }
-
-  function renderChat(){
-    return `
-      <div class="ok small"><b>AI Mode:</b> MOCK (no keys needed) · Currency: ₪</div>
-      <div style="height:10px"></div>
-
-      <div class="chatbox" id="chat"></div>
-
-      <div style="height:10px"></div>
-
-      <div id="followupsBox"></div>
-      <div id="priceBox" class="hidden"></div>
-
-      <div class="hr"></div>
-      <div class="row">
-        <button class="btn" id="backBtn">Back</button>
-        <button class="btn primary" id="nextBtn" disabled>Continue</button>
-      </div>
-    `;
-  }
-
-  function hookChat(){
-    const chat = document.getElementById("chat");
-    const followupsBox = document.getElementById("followupsBox");
-    const priceBox = document.getElementById("priceBox");
-    const nextBtn = document.getElementById("nextBtn");
-
-    function add(role, text){
-      const div = document.createElement("div");
-      div.className = "msg " + (role==="a" ? "a":"u");
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    // assistant start
-    const draft = {
-      productName: state.productName.trim(),
-      category: state.category,
-      location: state.location.trim() || "Israel",
-      photoBase64: state.photoBase64,
-      survey: {...state.survey, productName: state.productName.trim()}
-    };
-
-    add("a", "Hi! I’m your pricing assistant for used outdoor gear in Israel (₪). I’ll ask exactly 3 follow-up questions, then estimate a fair price range.");
-    add("a", `Got it — ${draft.productName}. Outdoors ${draft.survey.usedOutdoors1to7}/7, performance ${draft.survey.performanceVsNew1to7}/7, cleanness ${draft.survey.cleanness1to7}/7, warranty ${draft.survey.warrantyActiveYesNo}, missing parts ${draft.survey.missingPartsYesNo}, damages ${draft.survey.damagesYesNo}${(draft.survey.damagesYesNo==="Yes" && draft.survey.damagesDescription)? " ("+draft.survey.damagesDescription+")":""}, urgency ${draft.survey.saleUrgency1to7}/7.`);
-    add("a","To price it accurately, I need 3 quick details:");
-
-    state.followUpsQ = generateFollowUps(draft);
-
-    add("a","1) " + state.followUpsQ[0]);
-    add("a","2) " + state.followUpsQ[1]);
-    add("a","3) " + state.followUpsQ[2]);
-
-    followupsBox.innerHTML = `
-      <div class="two">
-        ${state.followUpsQ.map((q,i)=>`
-          <div>
-            <label>${escapeHtml(q)}</label>
-            <input id="fu${i}" placeholder="Type your answer…" value="${escapeHtml(state.followUpsA[i]||"")}" />
-          </div>
-        `).join("")}
-      </div>
-      <div style="margin-top:10px">
-        <button class="btn primary" id="evalBtn">Get price evaluation</button>
-      </div>
-    `;
-
-    document.getElementById("evalBtn").onclick = ()=>{
-      const a0 = (document.getElementById("fu0").value||"").trim();
-      const a1 = (document.getElementById("fu1").value||"").trim();
-      const a2 = (document.getElementById("fu2").value||"").trim();
-      if(!a0 || !a1 || !a2) return alert("Please answer all 3 follow-up questions.");
-
-      state.followUpsA = [a0,a1,a2];
-      add("u","A1: "+a0);
-      add("u","A2: "+a1);
-      add("u","A3: "+a2);
-
-      add("a","Thanks — calculating a fair price in ₪…");
-
-      state.ai = evaluateMock(draft, state.followUpsA);
-
-      add("a",
-        `Estimated fair range: ₪${state.ai.estimatedRangeILS.low}–₪${state.ai.estimatedRangeILS.high}\n`+
-        `Recommended listing price: ₪${state.ai.recommendedListPriceILS}\n`+
-        `Quick-sale price: ₪${state.ai.quickSalePriceILS}`
-      );
-      add("a","Why:\n"+state.ai.explanation);
-      add("a","Negotiation tips:\n"+state.ai.negotiationTips);
-      add("a","What price do you want to list it for? (₪)");
-
-      priceBox.classList.remove("hidden");
-      priceBox.innerHTML = `
-        <div class="two">
-          <div>
-            <label>Your list price (₪)</label>
-            <input id="sellerPrice" placeholder="e.g., 550" inputmode="numeric" />
-            <div class="small muted">Recommended: ${fmtILS(state.ai.recommendedListPriceILS)} · Quick: ${fmtILS(state.ai.quickSalePriceILS)}</div>
-          </div>
-          <div style="display:flex; align-items:end;">
-            <button class="btn primary" id="savePriceBtn">Save price</button>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("savePriceBtn").onclick = ()=>{
-        const v = Number((document.getElementById("sellerPrice").value||"").trim());
-        if(!Number.isFinite(v) || v<=0) return alert("Enter a valid positive number in ₪.");
-        state.sellerPrice = String(Math.round(v));
-        add("u","I want to list it for ₪"+state.sellerPrice);
-        add("a","Great — saved. You can continue.");
-        nextBtn.disabled = false;
-      };
-    };
-
-    document.getElementById("backBtn").onclick = ()=>{ state.step = 2; render(); };
-    nextBtn.onclick = ()=>{ state.step = 4; render(); };
-  }
-
-  function renderPublish(){
-    return `
-      <div class="two">
-        <div>
-          <img class="img" style="height:260px" src="${state.photoBase64}" alt="preview"/>
-        </div>
-        <div>
-          <div class="card">
-            <div class="small muted">Product</div>
-            <div class="title" style="margin-top:6px">${escapeHtml(state.productName)}</div>
-            <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-              <span class="pill">${escapeHtml(state.category)}</span>
-              <span class="pill">${escapeHtml(state.location)}</span>
+      <div class="grid">
+        <div class="card pad">
+          <div class="row" style="align-items:center;justify-content:space-between">
+            <div>
+              <div class="h1">Post an item</div>
+              <div class="muted small">Simple demo wizard. AI is mock (no keys).</div>
+            </div>
+            <div class="stepper">
+              ${steps.map((s,i)=>`
+                <div class="step">
+                  <div class="dot ${i<step?"done":(i===step?"active":"")}">${i+1}</div>
+                  <div class="small ${i===step?"":"muted"}" style="font-weight:700">${s}</div>
+                </div>
+              `).join("")}
             </div>
           </div>
-
-          <div style="height:10px"></div>
-
-          <div class="card">
-            <div class="small muted">AI recommended</div>
-            <div style="font-weight:900; font-size:18px">${fmtILS(state.ai.recommendedListPriceILS)}</div>
-            <div class="small muted">Fair: ${fmtILS(state.ai.estimatedRangeILS.low)}–${fmtILS(state.ai.estimatedRangeILS.high)} · Quick: ${fmtILS(state.ai.quickSalePriceILS)}</div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="card">
-            <div class="small muted">Seller list price</div>
-            <div style="font-weight:900; font-size:18px">₪${escapeHtml(state.sellerPrice)}</div>
-          </div>
         </div>
-      </div>
 
-      <div class="hr"></div>
-      <div class="row">
-        <button class="btn" id="backBtn">Back</button>
-        <button class="btn primary" id="publishBtn">Publish to marketplace</button>
-      </div>
-
-      <div style="margin-top:10px" class="notice small">
-        Publishing saves to your browser (localStorage). Then it appears on Home.
+        ${step===0 ? renderBasics(draft) : ""}
+        ${step===1 ? renderSurvey(draft) : ""}
+        ${step===2 ? renderChat(draft) : ""}
+        ${step===3 ? renderReview(draft, aiResult) : ""}
       </div>
     `;
+
+    bind();
+  };
+
+  const bind = () => {
+    // common nav
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    if(backBtn) backBtn.onclick = () => { step = Math.max(0, step-1); render(); };
+    if (nextBtn) nextBtn.onclick = () => {
+  // Step 3 (AI Chat): auto-calculate + auto-save so "Continue" always works
+  if (step === 2 && !draft.ai) {
+    // Ensure we have the 3 follow-up questions
+    if (followUpQs.length !== 3) {
+      followUpQs = generateFollowUps({
+        productName: draft.productName,
+        category: draft.category,
+        location: draft.location,
+        photoBase64: draft.photoBase64,
+        survey: draft.survey
+      });
+    }
+
+    // Read the answers directly from the input fields
+    const a0 = (document.getElementById("fu0")?.value || "").trim();
+    const a1 = (document.getElementById("fu1")?.value || "").trim();
+    const a2 = (document.getElementById("fu2")?.value || "").trim();
+
+    if (!a0 || !a1 || !a2) {
+      alert("Please fill all 3 follow-up answers first.");
+      return;
+    }
+
+    const trimmed = [a0, a1, a2];
+
+    // Calculate price
+    aiResult = evaluatePrice({
+      productName: draft.productName,
+      category: draft.category,
+      location: draft.location,
+      photoBase64: draft.photoBase64,
+      survey: draft.survey
+    }, trimmed);
+
+    // Save into draft so Step 3 validation passes
+    draft.followUps = followUpQs.map((q, i) => ({ question: q, answer: trimmed[i] }));
+    draft.ai = aiResult;
+
+
+    const cancelBtn = document.getElementById("cancelBtn");
+    if(cancelBtn) cancelBtn.onclick = () => { location.hash = "#home"; };
+
+    // step 0 bindings
+    const nameEl = document.getElementById("productName");
+if (nameEl) {
+  nameEl.oninput = (e) => {
+    draft.productName = e.target.value; // no re-render while typing
+  };
+}
+
+
+    const catEl = document.getElementById("category");
+    if(catEl) catEl.onchange = (e)=>{ draft.category = e.target.value; render(); };
+
+    const locEl = document.getElementById("location");
+    if(locEl) locEl.oninput = (e)=>{ draft.location = e.target.value; };
+
+    const fileEl = document.getElementById("photo");
+    if(fileEl) fileEl.onchange = (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      if(f.size > 2_500_000){
+        alert("Image too large for this demo (localStorage). Please choose < 2.5MB.");
+        e.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => { draft.photoBase64 = String(reader.result||""); render(); };
+      reader.readAsDataURL(f);
+    };
+
+    // step 1 bindings
+    bindRange("usedOutdoors", "usedOutdoorsVal", v=>draft.survey.usedOutdoors1to7=v);
+    bindRange("performance", "performanceVal", v=>draft.survey.performanceVsNew1to7=v);
+    bindRange("cleanness", "cleannessVal", v=>draft.survey.cleanness1to7=v);
+    bindRange("urgency", "urgencyVal", v=>draft.survey.saleUrgency1to7=v);
+
+    const warrEl = document.getElementById("warranty");
+    if(warrEl) warrEl.onchange = (e)=>{ draft.survey.warrantyActiveYesNo = e.target.value; };
+
+    const missEl = document.getElementById("missing");
+    if(missEl) missEl.onchange = (e)=>{ draft.survey.missingPartsYesNo = e.target.value; };
+
+    const dmgEl = document.getElementById("damages");
+    if(dmgEl) dmgEl.onchange = (e)=>{ draft.survey.damagesYesNo = e.target.value; render(); };
+
+    const dmgTextEl = document.getElementById("damagesText");
+    if(dmgTextEl) dmgTextEl.oninput = (e)=>{ draft.survey.damagesDescription = e.target.value; };
+
+    // step 2 (chat) bindings
+    const startChatBtn = document.getElementById("startChatBtn");
+    if(startChatBtn) startChatBtn.onclick = () => {
+      // initialize chat once
+      if(chatMessages.length) return;
+      const summary = surveySummaryLine(draft);
+      chatMessages = [
+        {role:"assistant", content:"Hi! I’m your pricing assistant for used outdoor gear in Israel (₪). I’ll ask exactly 3 follow-up questions, then estimate a fair price range."},
+        {role:"assistant", content: summary}
+      ];
+      followUpQs = generateFollowUps({
+        productName: draft.productName,
+        category: draft.category,
+        location: draft.location,
+        photoBase64: draft.photoBase64,
+        survey: draft.survey
+      });
+      chatMessages.push({role:"assistant", content:"To price it accurately, I need 3 quick details:"});
+      chatMessages.push({role:"assistant", content:"1) " + followUpQs[0]});
+      chatMessages.push({role:"assistant", content:"2) " + followUpQs[1]});
+      chatMessages.push({role:"assistant", content:"3) " + followUpQs[2]});
+      render();
+      scrollChatToBottom();
+    };
+
+    for(let i=0;i<3;i++){
+      const ansEl = document.getElementById("fu"+i);
+      if(ansEl) ansEl.oninput = (e)=>{ followUpAnswers[i] = e.target.value; };
+    }
+
+const evalBtn = document.getElementById("evalBtn");
+if (evalBtn) evalBtn.onclick = () => {
+  if (followUpQs.length !== 3) {
+    alert("Click Start chat first.");
+    return;
   }
 
-  function hookPublish(){
-    document.getElementById("backBtn").onclick = ()=>{ state.step = 3; render(); };
-    document.getElementById("publishBtn").onclick = ()=>{
+  // Read answers directly from the inputs (more reliable than state)
+  const a0 = (document.getElementById("fu0")?.value || "").trim();
+  const a1 = (document.getElementById("fu1")?.value || "").trim();
+  const a2 = (document.getElementById("fu2")?.value || "").trim();
+  const trimmed = [a0, a1, a2];
+
+  if (trimmed.some(x => !x)) {
+    alert("Please answer all 3 follow-up questions.");
+    return;
+  }
+
+  // keep state in sync
+  followUpAnswers = trimmed;
+
+  chatMessages.push({ role: "user", content: "A1: " + trimmed[0] });
+  chatMessages.push({ role: "user", content: "A2: " + trimmed[1] });
+  chatMessages.push({ role: "user", content: "A3: " + trimmed[2] });
+  chatMessages.push({ role: "assistant", content: "Thanks — calculating a fair price in ₪…" });
+
+  aiResult = evaluatePrice({
+    productName: draft.productName,
+    category: draft.category,
+    location: draft.location,
+    photoBase64: draft.photoBase64,
+    survey: draft.survey
+  }, trimmed);
+
+  chatMessages.push({
+    role: "assistant",
+    content:
+      `Estimated fair range: ${formatILS(aiResult.estimatedRangeILS.low)}–${formatILS(aiResult.estimatedRangeILS.high)}\n` +
+      `Recommended listing price: ${formatILS(aiResult.recommendedListPriceILS)}\n` +
+      `Quick-sale price: ${formatILS(aiResult.quickSalePriceILS)}`
+  });
+  chatMessages.push({ role: "assistant", content: "Why:\n" + aiResult.explanation });
+  chatMessages.push({ role: "assistant", content: "Negotiation tips:\n" + aiResult.negotiationTips });
+  chatMessages.push({ role: "assistant", content: "What price do you want to list it for? (₪)" });
+
+  render();
+  scrollChatToBottom();
+};
+
+
+    const priceEl = document.getElementById("sellerPrice");
+    if(priceEl) priceEl.oninput = (e)=>{ draft.sellerPrice = e.target.value; };
+
+    const savePriceBtn = document.getElementById("savePriceBtn");
+    if(savePriceBtn) savePriceBtn.onclick = () => {
+      if(!aiResult){ alert("Run the evaluation first."); return; }
+      const n = Number(draft.sellerPrice);
+      if(!Number.isFinite(n) || n<=0){ alert("Enter a valid positive number in ₪."); return; }
+      draft.followUps = followUpQs.map((q,i)=>({question:q, answer:String(followUpAnswers[i]).trim()}));
+      draft.ai = aiResult;
+      chatMessages.push({role:"user", content:"I want to list it for " + formatILS(n)});
+      chatMessages.push({role:"assistant", content:"Great — saved. Continue to Review."});
+      render();
+      scrollChatToBottom();
+    };
+
+    // publish
+    const publishBtn = document.getElementById("publishBtn");
+    if(publishBtn) publishBtn.onclick = () => {
+      if(!draft.ai) return alert("Missing AI results.");
+      const n = Number(draft.sellerPrice);
+      if(!Number.isFinite(n) || n<=0) return alert("Missing/invalid seller list price.");
       const listing = {
         id: nanoid(),
         createdAt: new Date().toISOString(),
-        productName: state.productName.trim(),
-        category: state.category,
-        location: state.location.trim() || "Israel",
-        photoBase64: state.photoBase64,
-        survey: {...state.survey, productName: state.productName.trim()},
-        followUps: state.followUpsQ.map((q,i)=>({question:q, answer: state.followUpsA[i]})),
-        ai: state.ai,
-        sellerChosenListPriceILS: Number(state.sellerPrice)
+        productName: draft.productName.trim(),
+        category: draft.category,
+        location: (draft.location||"Israel").trim() || "Israel",
+        photoBase64: draft.photoBase64,
+        survey: {
+          usedOutdoors1to7: Number(draft.survey.usedOutdoors1to7),
+          performanceVsNew1to7: Number(draft.survey.performanceVsNew1to7),
+          cleanness1to7: Number(draft.survey.cleanness1to7),
+          warrantyActiveYesNo: draft.survey.warrantyActiveYesNo,
+          missingPartsYesNo: draft.survey.missingPartsYesNo,
+          damagesYesNo: draft.survey.damagesYesNo,
+          damagesDescription: String(draft.survey.damagesDescription||""),
+          saleUrgency1to7: Number(draft.survey.saleUrgency1to7),
+          productName: draft.productName.trim()
+        },
+        followUps: draft.followUps || [],
+        ai: draft.ai,
+        sellerChosenListPriceILS: Math.round(n)
       };
-      const list = loadListings();
-      list.unshift(listing);
-      saveListings(list);
-      goHome();
+      upsertListing(listing);
+      location.hash = "#listing/" + encodeURIComponent(listing.id);
     };
+  };
+
+  function bindRange(id, outId, onSet){
+    const el = document.getElementById(id);
+    const out = document.getElementById(outId);
+    if(el && out){
+      el.oninput = (e)=>{
+        const v = Number(e.target.value);
+        out.textContent = v;
+        onSet(v);
+      };
+    }
   }
 
-  function scoreField(labelText, key, value){
+  function validateStep(step, draft, aiResult){
+    if(step===0){
+      if(!draft.productName.trim()) return "Please enter a product name.";
+      if(!draft.category) return "Please choose a category.";
+      if(!draft.photoBase64) return "Please upload a photo.";
+    }
+    if(step===1){
+      if(draft.survey.damagesYesNo==="Yes" && !String(draft.survey.damagesDescription||"").trim()){
+        return "Please describe the damages.";
+      }
+    }
+    if(step===2){
+      if(!draft.ai){
+        return "Please complete AI chat: Start chat → answer 3 follow-ups → evaluate → save your list price.";
+      }
+    }
+    return null;
+  }
+
+  render();
+
+  function renderBasics(d){
     return `
-      <div>
-        <label>${labelText}</label>
-        <div class="two" style="grid-template-columns:90px 1fr;">
-          <input id="${key}" type="number" min="1" max="7" value="${value}" />
-          <div class="small muted" style="align-self:center">1=low · 4=medium · 7=high</div>
+      <div class="card pad">
+        <div class="h2">Step 1 · Basics</div>
+        <div class="help">Upload a photo and basic product info.</div>
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="col">
+            <div class="label">Name of the product</div>
+            <input class="input" id="productName" value="${escapeHtml(d.productName)}" placeholder="e.g., Osprey Atmos 65 backpack"/>
+            <div class="help">Tip: include brand + model.</div>
+          </div>
+          <div class="col" style="max-width:300px">
+            <div class="label">Category</div>
+            <select class="input" id="category">
+              ${CATEGORIES.map(c=>`<option ${c===d.category?"selected":""}>${escapeHtml(c)}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div class="col">
+            <div class="label">Location</div>
+            <input class="input" id="location" value="${escapeHtml(d.location)}" placeholder="Israel"/>
+          </div>
+          <div class="col">
+            <div class="label">Photo (JPG/PNG, < 2.5MB)</div>
+            <input class="input" id="photo" type="file" accept="image/png,image/jpeg"/>
+            <div class="help">For demo reliability, large images are blocked.</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <img class="img" style="height:280px;border-radius:16px" src="${escapeHtml(d.photoBase64)}" alt="preview"/>
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn ghost" id="cancelBtn">Cancel</button>
+          <button class="btn primary" id="nextBtn">Continue</button>
         </div>
       </div>
     `;
   }
-  function bindScore(key, setter){
-    const el = document.getElementById(key);
-    el.oninput = ()=>{
-      let v = Number(el.value);
-      if(!Number.isFinite(v)) v = 4;
-      v = clamp(1, Math.round(v), 7);
-      el.value = v;
-      setter(v);
-    };
-  }
-  async function fileToDataURL(file){
-    return new Promise((resolve,reject)=>{
-      const r = new FileReader();
-      r.onload = ()=> resolve(String(r.result||""));
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
+
+  function renderSurvey(d){
+    const s = d.survey;
+    return `
+      <div class="card pad">
+        <div class="h2">Step 2 · Survey (8 questions)</div>
+        <div class="help">1=low/poor · 4=medium · 7=high/excellent</div>
+        <div class="divider"></div>
+
+        <div class="row">
+          ${rangeField("Used outdoors (1–7)", "usedOutdoors", s.usedOutdoors1to7, "usedOutdoorsVal")}
+          ${rangeField("Performance vs new (1–7)", "performance", s.performanceVsNew1to7, "performanceVal")}
+        </div>
+
+        <div class="row">
+          ${rangeField("Cleanness (1–7)", "cleanness", s.cleanness1to7, "cleannessVal")}
+          ${rangeField("Sale urgency (1–7)", "urgency", s.saleUrgency1to7, "urgencyVal")}
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="label">Warranty active</div>
+            <select class="input" id="warranty">
+              <option ${s.warrantyActiveYesNo==="Yes"?"selected":""}>Yes</option>
+              <option ${s.warrantyActiveYesNo==="No"?"selected":""}>No</option>
+            </select>
+          </div>
+          <div class="col">
+            <div class="label">Missing parts?</div>
+            <select class="input" id="missing">
+              <option ${s.missingPartsYesNo==="No"?"selected":""}>No</option>
+              <option ${s.missingPartsYesNo==="Yes"?"selected":""}>Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="label">Damages?</div>
+            <select class="input" id="damages">
+              <option ${s.damagesYesNo==="No"?"selected":""}>No</option>
+              <option ${s.damagesYesNo==="Yes"?"selected":""}>Yes</option>
+            </select>
+            ${s.damagesYesNo==="Yes" ? `
+              <div style="margin-top:10px">
+                <div class="label">Describe damages</div>
+                <textarea class="input" id="damagesText" placeholder="e.g., small tear, zipper sticks…">${escapeHtml(s.damagesDescription||"")}</textarea>
+              </div>
+            ` : ``}
+          </div>
+          <div class="col">
+            <div class="label">Name of the product (read-only)</div>
+            <input class="input" value="${escapeHtml(d.productName)}" readonly/>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn" id="backBtn">Back</button>
+          <button class="btn primary" id="nextBtn">Continue to AI chat</button>
+        </div>
+      </div>
+    `;
   }
 
-  render();
+  function rangeField(label, id, value, outId){
+    return `
+      <div class="col">
+        <div class="label">${escapeHtml(label)}</div>
+        <div class="row nowrap" style="align-items:center">
+          <input class="input" style="padding:0;height:40px" type="range" min="1" max="7" value="${value}" id="${id}"/>
+          <span class="pill solid" id="${outId}">${value}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function surveySummaryLine(d){
+    const s = d.survey;
+    const dmg = s.damagesYesNo === "Yes" ? (s.damagesDescription ? ` (${s.damagesDescription})` : "") : "";
+    return `Got it — ${d.productName}. Outdoors ${s.usedOutdoors1to7}/7, performance ${s.performanceVsNew1to7}/7, cleanness ${s.cleanness1to7}/7, warranty ${s.warrantyActiveYesNo}, missing parts ${s.missingPartsYesNo}, damages ${s.damagesYesNo}${dmg}, urgency ${s.saleUrgency1to7}/7.`;
+  }
+
+  function renderChat(d){
+  // Always prepare the 3 follow-up questions (demo reliability)
+if (followUpQs.length !== 3) {
+  followUpQs = generateFollowUps({
+    productName: d.productName,
+    category: d.category,
+    location: d.location,
+    photoBase64: d.photoBase64,
+    survey: d.survey
+  });
 }
 
-// Start
-ensureSeed();
-goHome();
+// Force chat started so the follow-up inputs show
+if (!chatMessages.length) {
+  chatMessages = [{
+    role: "assistant",
+    content: "Demo mode: answer the 3 follow-up fields below, then press Continue. I will calculate automatically."
+  }];
+}
+
+    const chatStarted = chatMessages.length>0;
+    const evalReady = followUpQs.length===3 && followUpAnswers.every(x=>String(x||"").trim());
+    const hasAI = !!aiResult;
+    const hasSavedPrice = !!d.ai && Number(d.sellerPrice) > 0;
+
+    return `
+      <div class="card pad">
+        <div class="row" style="align-items:center;justify-content:space-between">
+          <div>
+            <div class="h2">Step 3 · AI Pricing Chat</div>
+            <div class="help">Mock mode (works with no API keys). The assistant asks exactly 3 follow-ups.</div>
+          </div>
+          <span class="pill">AI Mode: <b>MOCK</b></span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="chatbox" id="chatbox">
+          <div class="grid" style="gap:10px">
+            ${chatMessages.length ? chatMessages.map(m=>`
+              <div class="bubble ${m.role}">${escapeHtml(m.content)}</div>
+            `).join("") : `
+              <div class="bubble assistant">Click “Start chat” to begin.</div>
+            `}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+<div class="row" style="justify-content:space-between;align-items:center">
+  <button class="btn" id="backBtn">Back</button>
+  <span class="small muted">Fill the 3 answers below, then press Continue (it calculates automatically).</span>
+</div>
+
+
+        ${chatStarted ? `
+          <div class="divider"></div>
+          <div class="row">
+            <div class="col">
+              <div class="label">Follow-up answer 1</div>
+              <input class="input" id="fu0" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[0]||"")}"/>
+            </div>
+            <div class="col">
+              <div class="label">Follow-up answer 2</div>
+              <input class="input" id="fu1" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[1]||"")}"/>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="col">
+              <div class="label">Follow-up answer 3</div>
+              <input class="input" id="fu2" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[2]||"")}"/>
+            </div>
+          </div>
+
+          ${hasAI ? `
+            <div class="divider"></div>
+            <div class="card pad" style="border-radius:16px;background:#fafafa">
+              <div class="small muted">Recommended: <b style="color:#111">${formatILS(aiResult.recommendedListPriceILS)}</b> · Quick sale: <b style="color:#111">${formatILS(aiResult.quickSalePriceILS)}</b></div>
+            </div>
+
+            <div style="margin-top:10px">
+              <div class="label">What price do you want to list it for? (₪)</div>
+              <div class="row">
+                <input class="input" id="sellerPrice" inputmode="numeric" placeholder="e.g., 550" value="${escapeHtml(d.sellerPrice||"")}"/>
+                <button class="btn primary" id="savePriceBtn">Save list price</button>
+              </div>
+              <div class="help">${hasSavedPrice ? "Saved — continue to Review." : "After saving, you can continue."}</div>
+            </div>
+          ` : ``}
+        ` : ``}
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="small muted">Complete: Start chat → answer 3 → evaluate → save your list price</span>
+          <button class="btn primary" id="nextBtn">Continue</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReview(d, ai){
+    return `
+      <div class="card pad">
+        <div class="h2">Step 4 · Review & Publish</div>
+        <div class="help">Publishing saves to localStorage and shows on the marketplace.</div>
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="col">
+            <img class="img" style="height:280px;border-radius:16px" src="${escapeHtml(d.photoBase64)}" alt="preview"/>
+          </div>
+          <div class="col">
+            <div class="card pad" style="border-radius:16px">
+              <div class="small muted">Product</div>
+              <div class="h1" style="margin-top:6px">${escapeHtml(d.productName)}</div>
+              <div class="row" style="margin-top:10px">
+                <span class="pill solid">${escapeHtml(d.category)}</span>
+                <span class="pill">${escapeHtml(d.location || "Israel")}</span>
+              </div>
+            </div>
+
+            <div class="card pad" style="border-radius:16px;margin-top:10px">
+              <div class="small muted">Seller chosen list price</div>
+              <div class="h1" style="margin-top:6px">${formatILS(Number(d.sellerPrice||0))}</div>
+            </div>
+
+            <div class="card pad" style="border-radius:16px;margin-top:10px">
+              <div class="small muted">AI recommended</div>
+              ${ai ? `
+                <div class="h1" style="margin-top:6px">${formatILS(ai.recommendedListPriceILS)}</div>
+                <div class="small muted" style="margin-top:6px">Fair: ${formatILS(ai.estimatedRangeILS.low)}–${formatILS(ai.estimatedRangeILS.high)} · Quick: ${formatILS(ai.quickSalePriceILS)}</div>
+              ` : `<div class="warn">Missing AI results</div>`}
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <button class="btn" id="backBtn">Back</button>
+          <button class="btn primary" id="publishBtn">Publish</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function scrollChatToBottom(){
+    const el = document.getElementById("chatbox");
+    if(el) el.scrollTop = el.scrollHeight;
+  }
+}
+
+/* init */
+ensureSeeded();
 </script>
 </body>
 </html>
+
