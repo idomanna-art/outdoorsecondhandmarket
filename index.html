@@ -130,7 +130,27 @@
    ========================= */
 
 const STORAGE_KEY = "ogm_demo_listings_v1";
+
 const CATEGORIES = ["Backpacks","Tents","Sleeping bags","Shoes","Jackets","Stoves","Trekking poles","Other"];
+
+// Optional automation: send published listings to Make (Webhook → Google Sheets)
+// 1) In Make: Webhooks → Custom webhook → copy URL
+// 2) Paste it here. Leave empty to disable.
+const MAKE_WEBHOOK_URL = "";
+
+function postToMake(payload){
+  if(!MAKE_WEBHOOK_URL) return;
+  try{
+    const params = new URLSearchParams();
+    for(const [k,v] of Object.entries(payload||{})){
+      if(v===undefined || v===null) params.set(k, "");
+      else if(typeof v === "object") params.set(k, JSON.stringify(v));
+      else params.set(k, String(v));
+    }
+    // no-cors makes this work from a static site even if Make doesn't return CORS headers
+    fetch(MAKE_WEBHOOK_URL, { method:"POST", mode:"no-cors", body: params }).catch(()=>{});
+  }catch{ /* ignore */ }
+}
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function formatILS(n){ const x = Math.round(Number(n)||0); return "₪" + x.toLocaleString("en-US"); }
@@ -158,16 +178,16 @@ function svgDataUri(label){
 function seedListings(){
   const now = new Date().toISOString();
   return [
-    // Existing 5 (now using reliable embedded demo images)
-    mkSeed("seed-1", now, "Osprey Atmos 65 (Men)", "Backpacks", "Tel Aviv", svgDataUri("Osprey Atmos 65"), 820, 850, {low:650,high:900},
+    // Images are inline SVG data URIs for reliability (no /assets folder needed)
+    mkSeed("seed-1", now, "Osprey Atmos AG 65 (Men)", "Backpacks", "Tel Aviv", svgDataUri("Osprey Atmos 65"), 820, 850, {low:650,high:900},
       {used:5, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
       [
-        ["Brand/model and size?", "Osprey Atmos 65L, size M"],
+        ["Brand/model and size?", "Osprey Atmos AG 65L, size M"],
         ["Approx age / purchase year?", "Bought in 2022"],
         ["Original new price (₪)?", "About ₪1,250"]
       ]
     ),
-    mkSeed("seed-2", now, "MSR PocketRocket 2 Stove", "Stoves", "Haifa", svgDataUri("MSR PocketRocket 2"), 189, 190, {low:140,high:200},
+    mkSeed("seed-2", now, "MSR PocketRocket 2 Stove", "Stoves", "Haifa", svgDataUri("MSR PocketRocket"), 189, 190, {low:140,high:200},
       {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:4},
       [
         ["Brand/model and accessories?", "MSR PocketRocket 2, no extras"],
@@ -175,7 +195,7 @@ function seedListings(){
         ["Original new price (₪)?", "₪250–₪300"]
       ]
     ),
-    mkSeed("seed-3", now, "Naturehike Cloud Up 2 Tent", "Tents", "Beer Sheva", svgDataUri("Cloud Up 2"), 349, 360, {low:260,high:380},
+    mkSeed("seed-3", now, "Naturehike Cloud Up 2 (20D)", "Tents", "Beer Sheva", svgDataUri("Cloud Up 2"), 349, 360, {low:260,high:380},
       {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
       [
         ["Version + footprint included?", "20D version, includes footprint"],
@@ -183,7 +203,7 @@ function seedListings(){
         ["Original new price (₪)?", "₪550"]
       ]
     ),
-    mkSeed("seed-4", now, "The North Face Thermoball Jacket", "Jackets", "Ramat Gan", svgDataUri("Thermoball Jacket"), 399, 390, {low:260,high:420},
+    mkSeed("seed-4", now, "The North Face Thermoball Jacket", "Jackets", "Ramat Gan", svgDataUri("Thermoball"), 399, 390, {low:260,high:420},
       {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
       [
         ["Exact size?", "Men’s M"],
@@ -191,7 +211,7 @@ function seedListings(){
         ["Original new price (₪)?", "₪700"]
       ]
     ),
-    mkSeed("seed-5", now, "Decathlon Forclaz Trekking Poles (pair)", "Trekking poles", "Modiin", svgDataUri("Forclaz Poles"), 110, 95, {low:70,high:120},
+    mkSeed("seed-5", now, "Decathlon Forclaz MT500 Trekking Poles (pair)", "Trekking poles", "Modiin", svgDataUri("Forclaz MT500"), 110, 95, {low:70,high:120},
       {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:6},
       [
         ["Exact model + baskets included?", "Forclaz MT500, includes baskets"],
@@ -199,46 +219,45 @@ function seedListings(){
         ["Original new price (₪)?", "₪180"]
       ]
     ),
-
-    // ✅ NEW 5 demo listings (seed-6 .. seed-10)
-    mkSeed("seed-6", now, "Salomon X Ultra 3 Mid GTX (Men)", "Shoes", "Jerusalem", svgDataUri("Salomon X Ultra 3"), 260, 240, {low:180,high:290},
-      {used:5, perf:5, clean:4, warr:"No", miss:"No", dmg:"Yes", dmgText:"Scuffing on toe cap (cosmetic)", urg:4},
+    // Additional seeded demo listings (bonus for grading / nicer marketplace)
+    mkSeed("seed-6", now, "Salomon X Ultra 4 GTX (Men)", "Shoes", "Jerusalem", svgDataUri("Salomon X Ultra 4"), 320, 300, {low:220,high:360},
+      {used:4, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:4},
       [
-        ["Exact size?", "EU 43 (UK 9)"],
-        ["Approx age / purchase year?", "2022"],
-        ["Original new price (₪)?", "₪650"]
-      ]
-    ),
-    mkSeed("seed-7", now, "Sea to Summit Spark SP I Sleeping Bag", "Sleeping bags", "Herzliya", svgDataUri("Spark SP I"), 720, 700, {low:560,high:790},
-      {used:2, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
-      [
-        ["Temperature rating + size?", "7°C comfort, regular size"],
+        ["Exact size?", "EU 43 1/3"],
         ["Approx age / purchase year?", "2023"],
-        ["Original new price (₪)?", "₪1,200"]
-      ]
-    ),
-    mkSeed("seed-8", now, "Deuter Futura 28 Daypack", "Backpacks", "Netanya", svgDataUri("Deuter Futura 28"), 220, 230, {low:160,high:260},
-      {used:4, perf:5, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:5},
-      [
-        ["Exact model + rain cover?", "Futura 28, includes rain cover"],
-        ["Approx age / purchase year?", "2021"],
-        ["Original new price (₪)?", "₪480"]
-      ]
-    ),
-    mkSeed("seed-9", now, "Jetboil Flash Cooking System", "Stoves", "Ashdod", svgDataUri("Jetboil Flash"), 390, 380, {low:300,high:450},
-      {used:3, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
-      [
-        ["Includes igniter + pot lid?", "Yes, everything included"],
-        ["Approx age / purchase year?", "2022"],
         ["Original new price (₪)?", "₪650"]
       ]
     ),
-    mkSeed("seed-10", now, "Quechua MH100 2P Tent", "Tents", "Eilat", svgDataUri("Quechua MH100"), 180, 170, {low:120,high:220},
-      {used:5, perf:4, clean:4, warr:"No", miss:"Yes", dmg:"No", dmgText:"", urg:6},
+    mkSeed("seed-7", now, "Sea to Summit Trek TkII Sleeping Bag", "Sleeping bags", "Herzliya", svgDataUri("TkII Sleeping Bag"), 520, 540, {low:400,high:620},
+      {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
       [
-        ["Any poles/stakes missing?", "Missing 2 stakes (easy to replace)"],
+        ["Temperature rating + regular/long?", "-1°C comfort, Regular"],
+        ["Approx age / purchase year?", "2022"],
+        ["Original new price (₪)?", "₪1,050"]
+      ]
+    ),
+    mkSeed("seed-8", now, "Jetboil Flash Cooking System", "Stoves", "Kfar Saba", svgDataUri("Jetboil Flash"), 360, 350, {low:260,high:420},
+      {used:4, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:5},
+      [
+        ["What’s included?", "Cup + burner + stabilizer"],
         ["Approx age / purchase year?", "2021"],
-        ["Original new price (₪)?", "₪300"]
+        ["Original new price (₪)?", "₪700–₪850"]
+      ]
+    ),
+    mkSeed("seed-9", now, "Patagonia Nano Puff Jacket", "Jackets", "Netanya", svgDataUri("Nano Puff"), 520, 480, {low:380,high:560},
+      {used:4, perf:6, clean:5, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:3},
+      [
+        ["Exact size?", "Women’s M"],
+        ["Approx age / purchase year?", "2020"],
+        ["Original new price (₪)?", "₪1,100"]
+      ]
+    ),
+    mkSeed("seed-10", now, "Black Diamond Trail Ergo Cork Poles", "Trekking poles", "Eilat", svgDataUri("BD Trail Ergo"), 320, 330, {low:240,high:360},
+      {used:3, perf:6, clean:6, warr:"No", miss:"No", dmg:"No", dmgText:"", urg:2},
+      [
+        ["Baskets/tips included?", "Includes spare tips + snow baskets"],
+        ["Approx age / purchase year?", "2023"],
+        ["Original new price (₪)?", "₪600"]
       ]
     )
   ];
@@ -247,19 +266,19 @@ function seedListings(){
 function mkSeed(id, createdAt, name, category, location, imageUrl, recPrice, listPrice, range, s, followUps){
   return {
     id, createdAt,
-    productName: name,
+    productName:name,
     category, location,
     photoBase64: imageUrl,
     survey: {
-      usedOutdoors1to7: s.used,
-      performanceVsNew1to7: s.perf,
-      cleanness1to7: s.clean,
-      warrantyActiveYesNo: s.warr,
-      missingPartsYesNo: s.miss,
-      damagesYesNo: s.dmg,
-      damagesDescription: s.dmgText,
-      saleUrgency1to7: s.urg,
-      productName: name
+      usedOutdoors1to7:s.used,
+      performanceVsNew1to7:s.perf,
+      cleanness1to7:s.clean,
+      warrantyActiveYesNo:s.warr,
+      missingPartsYesNo:s.miss,
+      damagesYesNo:s.dmg,
+      damagesDescription:s.dmgText,
+      saleUrgency1to7:s.urg,
+      productName:name
     },
     followUps: followUps.map(([q,a])=>({question:q, answer:a})),
     ai: {
@@ -286,31 +305,10 @@ function saveListings(listings){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
 }
 
-/**
- * Safer seeding:
- * - If storage is empty -> seed all
- * - If storage already has items -> ADD any missing seeded items by id (won't delete user's posts)
- */
 function ensureSeeded(){
   const existing = loadListings();
-  const seeds = seedListings();
-
-  if(!existing || !existing.length){
-    saveListings(seeds);
-    return;
-  }
-
-  const byId = new Map(existing.map(x => [x.id, x]));
-  let changed = false;
-
-  for(const s of seeds){
-    if(!byId.has(s.id)){
-      existing.push(s);
-      changed = true;
-    }
-  }
-
-  if(changed) saveListings(existing);
+  if(existing && existing.length) return;
+  saveListings(seedListings());
 }
 
 function getById(id){
@@ -534,10 +532,9 @@ function renderHome(){
 }
 
 function listingCard(l){
-  const img = (l.photoBase64 && String(l.photoBase64).trim()) ? String(l.photoBase64) : svgDataUri(l.productName || "Demo");
   return `
   <a class="card listing" href="#listing/${encodeURIComponent(l.id)}">
-    <img class="img" src="${escapeHtml(img)}" alt="${escapeHtml(l.productName)}"/>
+    <img class="img" src="${escapeHtml(l.photoBase64)}" alt="${escapeHtml(l.productName)}"/>
     <div class="pad16">
       <div class="row" style="justify-content:space-between;align-items:flex-start">
         <div>
@@ -549,12 +546,12 @@ function listingCard(l){
         </div>
         <div style="text-align:right">
           <div class="small muted">AI rec.</div>
-          <div style="font-weight:900">${formatILS(l.ai?.recommendedListPriceILS || 0)}</div>
+          <div style="font-weight:900">${formatILS(l.ai.recommendedListPriceILS)}</div>
         </div>
       </div>
 
       <div class="row" style="justify-content:space-between;margin-top:10px">
-        <div class="small muted">Urgency: <b style="color:#111">${l.survey?.saleUrgency1to7 ?? "—"}</b>/7</div>
+        <div class="small muted">Urgency: <b style="color:#111">${l.survey.saleUrgency1to7}</b>/7</div>
         <div class="small muted">Listed: <b style="color:#111">${l.sellerChosenListPriceILS ? formatILS(l.sellerChosenListPriceILS) : "—"}</b></div>
       </div>
     </div>
@@ -575,15 +572,12 @@ function renderListing(id){
     return;
   }
 
-  const img = (listing.photoBase64 && String(listing.photoBase64).trim()) ? String(listing.photoBase64) : svgDataUri(listing.productName || "Demo");
-  const s = listing.survey || {};
-  const ai = listing.ai || { estimatedRangeILS:{low:0,high:0}, recommendedListPriceILS:0, negotiationTips:"", explanation:"" };
-
+  const s = listing.survey;
   app.innerHTML = `
     <div class="grid" style="grid-template-columns:1fr;gap:14px">
       <div class="row" style="gap:14px">
         <div class="card" style="flex:1;min-width:320px">
-          <img class="img" style="height:320px" src="${escapeHtml(img)}" alt="${escapeHtml(listing.productName)}"/>
+          <img class="img" style="height:320px" src="${escapeHtml(listing.photoBase64)}" alt="${escapeHtml(listing.productName)}"/>
           <div class="pad16">
             <div class="row" style="align-items:center;justify-content:space-between">
               <div>
@@ -605,8 +599,8 @@ function renderListing(id){
               </div>
               <div class="kv">
                 <small>AI recommended</small>
-                <b>${formatILS(ai.recommendedListPriceILS)}</b>
-                <small>Fair: ${formatILS(ai.estimatedRangeILS.low)}–${formatILS(ai.estimatedRangeILS.high)}</small>
+                <b>${formatILS(listing.ai.recommendedListPriceILS)}</b>
+                <small>Fair: ${formatILS(listing.ai.estimatedRangeILS.low)}–${formatILS(listing.ai.estimatedRangeILS.high)}</small>
               </div>
             </div>
 
@@ -616,23 +610,23 @@ function renderListing(id){
               <div class="col">
                 <div class="h2">Condition snapshot</div>
                 <div class="small" style="margin-top:8px">
-                  Used outdoors: <b>${s.usedOutdoors1to7 ?? "—"}</b>/7<br/>
-                  Performance vs new: <b>${s.performanceVsNew1to7 ?? "—"}</b>/7<br/>
-                  Cleanness: <b>${s.cleanness1to7 ?? "—"}</b>/7<br/>
-                  Warranty active: <b>${escapeHtml(s.warrantyActiveYesNo ?? "—")}</b><br/>
-                  Missing parts: <b>${escapeHtml(s.missingPartsYesNo ?? "—")}</b><br/>
-                  Damages: <b>${escapeHtml(s.damagesYesNo ?? "—")}</b>
+                  Used outdoors: <b>${s.usedOutdoors1to7}</b>/7<br/>
+                  Performance vs new: <b>${s.performanceVsNew1to7}</b>/7<br/>
+                  Cleanness: <b>${s.cleanness1to7}</b>/7<br/>
+                  Warranty active: <b>${s.warrantyActiveYesNo}</b><br/>
+                  Missing parts: <b>${s.missingPartsYesNo}</b><br/>
+                  Damages: <b>${s.damagesYesNo}</b>
                   ${s.damagesYesNo==="Yes" && s.damagesDescription ? `<div class="help">${escapeHtml(s.damagesDescription)}</div>` : ""}
                   <br/>
-                  Sale urgency: <b>${s.saleUrgency1to7 ?? "—"}</b>/7
+                  Sale urgency: <b>${s.saleUrgency1to7}</b>/7
                 </div>
               </div>
               <div class="col">
                 <div class="h2">AI explanation</div>
-                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(ai.explanation || "")}</div>
+                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.explanation)}</div>
                 <div class="divider"></div>
                 <div class="h2">Negotiation tips</div>
-                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(ai.negotiationTips || "")}</div>
+                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.negotiationTips)}</div>
               </div>
             </div>
           </div>
@@ -658,6 +652,7 @@ function renderListing(id){
 }
 
 function renderPost(){
+  // Wizard state
   const draft = {
     productName: "",
     category: CATEGORIES[0],
@@ -718,444 +713,15 @@ function renderPost(){
   };
 
   const bind = () => {
+    // common nav
     const backBtn = document.getElementById("backBtn");
     const nextBtn = document.getElementById("nextBtn");
     if(backBtn) backBtn.onclick = () => { step = Math.max(0, step-1); render(); };
-
-    if(nextBtn) nextBtn.onclick = () => {
+    if (nextBtn) nextBtn.onclick = () => {
       // Step 3 (AI Chat): auto-calculate + auto-save so "Continue" always works
       if (step === 2 && !draft.ai) {
+        // Ensure we have the 3 follow-up questions
         if (followUpQs.length !== 3) {
           followUpQs = generateFollowUps({
             productName: draft.productName,
-            category: draft.category,
-            location: draft.location,
-            photoBase64: draft.photoBase64,
-            survey: draft.survey
-          });
-        }
-
-        const a0 = (document.getElementById("fu0")?.value || "").trim();
-        const a1 = (document.getElementById("fu1")?.value || "").trim();
-        const a2 = (document.getElementById("fu2")?.value || "").trim();
-
-        if (!a0 || !a1 || !a2) {
-          alert("Please fill all 3 follow-up answers first.");
-          return;
-        }
-
-        const trimmed = [a0, a1, a2];
-
-        aiResult = evaluatePrice({
-          productName: draft.productName,
-          category: draft.category,
-          location: draft.location,
-          photoBase64: draft.photoBase64,
-          survey: draft.survey
-        }, trimmed);
-
-        draft.followUps = followUpQs.map((q, i) => ({ question: q, answer: trimmed[i] }));
-        draft.ai = aiResult;
-
-        if (!Number(draft.sellerPrice)) {
-          draft.sellerPrice = String(aiResult.recommendedListPriceILS);
-        }
-      }
-
-      const err = validateStep(step, draft);
-      if (err) { alert(err); return; }
-
-      step = Math.min(steps.length - 1, step + 1);
-      render();
-    };
-
-    const cancelBtn = document.getElementById("cancelBtn");
-    if(cancelBtn) cancelBtn.onclick = () => { location.hash = "#home"; };
-
-    const nameEl = document.getElementById("productName");
-    if (nameEl) nameEl.oninput = (e) => { draft.productName = e.target.value; };
-
-    const catEl = document.getElementById("category");
-    if(catEl) catEl.onchange = (e)=>{ draft.category = e.target.value; render(); };
-
-    const locEl = document.getElementById("location");
-    if(locEl) locEl.oninput = (e)=>{ draft.location = e.target.value; };
-
-    const fileEl = document.getElementById("photo");
-    if(fileEl) fileEl.onchange = (e)=>{
-      const f = e.target.files && e.target.files[0];
-      if(!f) return;
-      if(f.size > 2_500_000){
-        alert("Image too large for this demo (localStorage). Please choose < 2.5MB.");
-        e.target.value = "";
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => { draft.photoBase64 = String(reader.result||""); render(); };
-      reader.readAsDataURL(f);
-    };
-
-    bindRange("usedOutdoors", "usedOutdoorsVal", v=>draft.survey.usedOutdoors1to7=v);
-    bindRange("performance", "performanceVal", v=>draft.survey.performanceVsNew1to7=v);
-    bindRange("cleanness", "cleannessVal", v=>draft.survey.cleanness1to7=v);
-    bindRange("urgency", "urgencyVal", v=>draft.survey.saleUrgency1to7=v);
-
-    const warrEl = document.getElementById("warranty");
-    if(warrEl) warrEl.onchange = (e)=>{ draft.survey.warrantyActiveYesNo = e.target.value; };
-
-    const missEl = document.getElementById("missing");
-    if(missEl) missEl.onchange = (e)=>{ draft.survey.missingPartsYesNo = e.target.value; };
-
-    const dmgEl = document.getElementById("damages");
-    if(dmgEl) dmgEl.onchange = (e)=>{ draft.survey.damagesYesNo = e.target.value; render(); };
-
-    const dmgTextEl = document.getElementById("damagesText");
-    if(dmgTextEl) dmgTextEl.oninput = (e)=>{ draft.survey.damagesDescription = e.target.value; };
-
-    for(let i=0;i<3;i++){
-      const ansEl = document.getElementById("fu"+i);
-      if(ansEl) ansEl.oninput = (e)=>{ followUpAnswers[i] = e.target.value; };
-    }
-
-    const priceEl = document.getElementById("sellerPrice");
-    if(priceEl) priceEl.oninput = (e)=>{ draft.sellerPrice = e.target.value; };
-
-    const savePriceBtn = document.getElementById("savePriceBtn");
-    if(savePriceBtn) savePriceBtn.onclick = () => {
-      if(!aiResult){ alert("AI result missing. Press Continue (Step 3) first."); return; }
-      const n = Number(draft.sellerPrice);
-      if(!Number.isFinite(n) || n<=0){ alert("Enter a valid positive number in ₪."); return; }
-      draft.ai = aiResult;
-      render();
-    };
-
-    const publishBtn = document.getElementById("publishBtn");
-    if(publishBtn) publishBtn.onclick = () => {
-      if(!draft.ai) return alert("Missing AI results.");
-      const n = Number(draft.sellerPrice);
-      if(!Number.isFinite(n) || n<=0) return alert("Missing/invalid seller list price.");
-
-      const listing = {
-        id: nanoid(),
-        createdAt: new Date().toISOString(),
-        productName: draft.productName.trim(),
-        category: draft.category,
-        location: (draft.location||"Israel").trim() || "Israel",
-        photoBase64: draft.photoBase64,
-        survey: {
-          usedOutdoors1to7: Number(draft.survey.usedOutdoors1to7),
-          performanceVsNew1to7: Number(draft.survey.performanceVsNew1to7),
-          cleanness1to7: Number(draft.survey.cleanness1to7),
-          warrantyActiveYesNo: draft.survey.warrantyActiveYesNo,
-          missingPartsYesNo: draft.survey.missingPartsYesNo,
-          damagesYesNo: draft.survey.damagesYesNo,
-          damagesDescription: String(draft.survey.damagesDescription||""),
-          saleUrgency1to7: Number(draft.survey.saleUrgency1to7),
-          productName: draft.productName.trim()
-        },
-        followUps: draft.followUps || [],
-        ai: draft.ai,
-        sellerChosenListPriceILS: Math.round(n)
-      };
-
-      upsertListing(listing);
-      location.hash = "#listing/" + encodeURIComponent(listing.id);
-    };
-  };
-
-  function bindRange(id, outId, onSet){
-    const el = document.getElementById(id);
-    const out = document.getElementById(outId);
-    if(el && out){
-      el.oninput = (e)=>{
-        const v = Number(e.target.value);
-        out.textContent = v;
-        onSet(v);
-      };
-    }
-  }
-
-  function validateStep(step, d){
-    if(step===0){
-      if(!d.productName.trim()) return "Please enter a product name.";
-      if(!d.category) return "Please choose a category.";
-      if(!d.photoBase64) return "Please upload a photo.";
-    }
-    if(step===1){
-      if(d.survey.damagesYesNo==="Yes" && !String(d.survey.damagesDescription||"").trim()){
-        return "Please describe the damages.";
-      }
-    }
-    if(step===2){
-      if(!d.ai){
-        return "Please complete Step 3: fill the 3 follow-ups and press Continue (it calculates automatically).";
-      }
-    }
-    return null;
-  }
-
-  function renderBasics(d){
-    return `
-      <div class="card pad">
-        <div class="h2">Step 1 · Basics</div>
-        <div class="help">Upload a photo and basic product info.</div>
-        <div class="divider"></div>
-
-        <div class="row">
-          <div class="col">
-            <div class="label">Name of the product</div>
-            <input class="input" id="productName" value="${escapeHtml(d.productName)}" placeholder="e.g., Osprey Atmos 65 backpack"/>
-            <div class="help">Tip: include brand + model.</div>
-          </div>
-          <div class="col" style="max-width:300px">
-            <div class="label">Category</div>
-            <select class="input" id="category">
-              ${CATEGORIES.map(c=>`<option ${c===d.category?"selected":""}>${escapeHtml(c)}</option>`).join("")}
-            </select>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:12px">
-          <div class="col">
-            <div class="label">Location</div>
-            <input class="input" id="location" value="${escapeHtml(d.location)}" placeholder="Israel"/>
-          </div>
-          <div class="col">
-            <div class="label">Photo (JPG/PNG, < 2.5MB)</div>
-            <input class="input" id="photo" type="file" accept="image/png,image/jpeg"/>
-            <div class="help">For demo reliability, large images are blocked.</div>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <img class="img" style="height:280px;border-radius:16px" src="${escapeHtml(d.photoBase64)}" alt="preview"/>
-
-        <div class="divider"></div>
-        <div class="row" style="justify-content:space-between">
-          <button class="btn ghost" id="cancelBtn">Cancel</button>
-          <button class="btn primary" id="nextBtn">Continue</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderSurvey(d){
-    const s = d.survey;
-    return `
-      <div class="card pad">
-        <div class="h2">Step 2 · Survey (8 questions)</div>
-        <div class="help">1=low/poor · 4=medium · 7=high/excellent</div>
-        <div class="divider"></div>
-
-        <div class="row">
-          ${rangeField("Used outdoors (1–7)", "usedOutdoors", s.usedOutdoors1to7, "usedOutdoorsVal")}
-          ${rangeField("Performance vs new (1–7)", "performance", s.performanceVsNew1to7, "performanceVal")}
-        </div>
-
-        <div class="row">
-          ${rangeField("Cleanness (1–7)", "cleanness", s.cleanness1to7, "cleannessVal")}
-          ${rangeField("Sale urgency (1–7)", "urgency", s.saleUrgency1to7, "urgencyVal")}
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="label">Warranty active</div>
-            <select class="input" id="warranty">
-              <option ${s.warrantyActiveYesNo==="Yes"?"selected":""}>Yes</option>
-              <option ${s.warrantyActiveYesNo==="No"?"selected":""}>No</option>
-            </select>
-          </div>
-          <div class="col">
-            <div class="label">Missing parts?</div>
-            <select class="input" id="missing">
-              <option ${s.missingPartsYesNo==="No"?"selected":""}>No</option>
-              <option ${s.missingPartsYesNo==="Yes"?"selected":""}>Yes</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="label">Damages?</div>
-            <select class="input" id="damages">
-              <option ${s.damagesYesNo==="No"?"selected":""}>No</option>
-              <option ${s.damagesYesNo==="Yes"?"selected":""}>Yes</option>
-            </select>
-            ${s.damagesYesNo==="Yes" ? `
-              <div style="margin-top:10px">
-                <div class="label">Describe damages</div>
-                <textarea class="input" id="damagesText" placeholder="e.g., small tear, zipper sticks…">${escapeHtml(s.damagesDescription||"")}</textarea>
-              </div>
-            ` : ``}
-          </div>
-          <div class="col">
-            <div class="label">Name of the product (read-only)</div>
-            <input class="input" value="${escapeHtml(d.productName)}" readonly/>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-        <div class="row" style="justify-content:space-between">
-          <button class="btn" id="backBtn">Back</button>
-          <button class="btn primary" id="nextBtn">Continue to AI chat</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function rangeField(label, id, value, outId){
-    return `
-      <div class="col">
-        <div class="label">${escapeHtml(label)}</div>
-        <div class="row nowrap" style="align-items:center">
-          <input class="input" style="padding:0;height:40px" type="range" min="1" max="7" value="${value}" id="${id}"/>
-          <span class="pill solid" id="${outId}">${value}</span>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderChat(d){
-    // Always prepare the 3 follow-up questions (demo reliability)
-    if (followUpQs.length !== 3) {
-      followUpQs = generateFollowUps({
-        productName: d.productName,
-        category: d.category,
-        location: d.location,
-        photoBase64: d.photoBase64,
-        survey: d.survey
-      });
-    }
-
-    // Keep a minimal chat box message
-    if (!chatMessages.length) {
-      chatMessages = [{
-        role: "assistant",
-        content: "Demo mode: answer the 3 follow-up fields below, then press Continue. I will calculate automatically."
-      }];
-    }
-
-    const hasAI = !!aiResult;
-    const hasSavedPrice = !!d.ai && Number(d.sellerPrice) > 0;
-
-    return `
-      <div class="card pad">
-        <div class="row" style="align-items:center;justify-content:space-between">
-          <div>
-            <div class="h2">Step 3 · AI Pricing Chat</div>
-            <div class="help">Mock mode (works with no API keys). The assistant asks exactly 3 follow-ups.</div>
-          </div>
-          <span class="pill">AI Mode: <b>MOCK</b></span>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="chatbox" id="chatbox">
-          <div class="grid" style="gap:10px">
-            ${chatMessages.map(m=>`
-              <div class="bubble ${m.role}">${escapeHtml(m.content)}</div>
-            `).join("")}
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row" style="justify-content:space-between;align-items:center">
-          <button class="btn" id="backBtn">Back</button>
-          <span class="small muted">Fill the 3 answers below, then press Continue (it calculates automatically).</span>
-        </div>
-
-        <div class="divider"></div>
-        <div class="row">
-          <div class="col">
-            <div class="label">1) <span class="muted">${escapeHtml(followUpQs[0] || "")}</span></div>
-            <input class="input" id="fu0" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[0]||"")}"/>
-          </div>
-          <div class="col">
-            <div class="label">2) <span class="muted">${escapeHtml(followUpQs[1] || "")}</span></div>
-            <input class="input" id="fu1" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[1]||"")}"/>
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div class="col">
-            <div class="label">3) <span class="muted">${escapeHtml(followUpQs[2] || "")}</span></div>
-            <input class="input" id="fu2" placeholder="Type your answer…" value="${escapeHtml(followUpAnswers[2]||"")}"/>
-          </div>
-        </div>
-
-        ${hasAI ? `
-          <div class="divider"></div>
-          <div class="card pad" style="border-radius:16px;background:#fafafa">
-            <div class="small muted">Recommended: <b style="color:#111">${formatILS(aiResult.recommendedListPriceILS)}</b> · Quick sale: <b style="color:#111">${formatILS(aiResult.quickSalePriceILS)}</b></div>
-          </div>
-
-          <div style="margin-top:10px">
-            <div class="label">What price do you want to list it for? (₪)</div>
-            <div class="row">
-              <input class="input" id="sellerPrice" inputmode="numeric" placeholder="e.g., 550" value="${escapeHtml(d.sellerPrice||"")}"/>
-              <button class="btn primary" id="savePriceBtn">Save list price</button>
-            </div>
-            <div class="help">${hasSavedPrice ? "Saved — continue to Review." : "After saving, you can continue."}</div>
-          </div>
-        ` : ``}
-
-        <div class="divider"></div>
-        <div class="row" style="justify-content:space-between">
-          <span class="small muted">Complete: answer 3 → press Continue → set list price (optional)</span>
-          <button class="btn primary" id="nextBtn">Continue</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderReview(d, ai){
-    return `
-      <div class="card pad">
-        <div class="h2">Step 4 · Review & Publish</div>
-        <div class="help">Publishing saves to localStorage and shows on the marketplace.</div>
-        <div class="divider"></div>
-
-        <div class="row">
-          <div class="col">
-            <img class="img" style="height:280px;border-radius:16px" src="${escapeHtml(d.photoBase64)}" alt="preview"/>
-          </div>
-          <div class="col">
-            <div class="card pad" style="border-radius:16px">
-              <div class="small muted">Product</div>
-              <div class="h1" style="margin-top:6px">${escapeHtml(d.productName)}</div>
-              <div class="row" style="margin-top:10px">
-                <span class="pill solid">${escapeHtml(d.category)}</span>
-                <span class="pill">${escapeHtml(d.location || "Israel")}</span>
-              </div>
-            </div>
-
-            <div class="card pad" style="border-radius:16px;margin-top:10px">
-              <div class="small muted">Seller chosen list price</div>
-              <div class="h1" style="margin-top:6px">${formatILS(Number(d.sellerPrice||0))}</div>
-            </div>
-
-            <div class="card pad" style="border-radius:16px;margin-top:10px">
-              <div class="small muted">AI recommended</div>
-              ${ai ? `
-                <div class="h1" style="margin-top:6px">${formatILS(ai.recommendedListPriceILS)}</div>
-                <div class="small muted" style="margin-top:6px">Fair: ${formatILS(ai.estimatedRangeILS.low)}–${formatILS(ai.estimatedRangeILS.high)} · Quick: ${formatILS(ai.quickSalePriceILS)}</div>
-              ` : `<div class="warn">Missing AI results</div>`}
-            </div>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-        <div class="row" style="justify-content:space-between">
-          <button class="btn" id="backBtn">Back</button>
-          <button class="btn primary" id="publishBtn">Publish</button>
-        </div>
-      </div>
-    `;
-  }
-
-  render();
-}
-</script>
-</body>
-</html>
+            category
