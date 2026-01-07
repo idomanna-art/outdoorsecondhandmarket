@@ -204,6 +204,8 @@ const CATEGORIES = ["Backpacks","Tents","Sleeping bags","Shoes","Jackets","Stove
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function formatILS(n){ const x = Math.round(Number(n)||0); return "₪" + x.toLocaleString("en-US"); }
 function nanoid(){ return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16); }
+function phoneToTel(p){ return String(p||"").trim().replace(/[^\d+]/g,""); }
+
 
 function svgDataUri(label){
   const safe = escapeHtml(label);
@@ -334,8 +336,7 @@ function mkSeed(id, createdAt, name, category, location, imageUrl, recPrice, lis
       estimatedRangeILS: range,
       recommendedListPriceILS: recPrice,
       quickSalePriceILS: Math.max(20, recPrice - 60),
-      explanation: "Seeded demo listing. In real use, the assistant references your survey + follow-ups to estimate fair pricing in Israel.",
-      negotiationTips: `List at ${formatILS(recPrice)}. Accept slightly lower depending on interest.`
+      explanation: "Seeded demo listing. In real use, the assistant references your survey + follow-ups to estimate fair pricing in Israel."
     },
     sellerChosenListPriceILS: listPrice
   };
@@ -546,17 +547,11 @@ Follow-ups:
 
 Result: fair range + recommended price optimized for urgency.`;
 
-  const tips =
-`List at ${formatILS(rec)}.
-Be ready to accept ${formatILS(Math.max(20,rec-40))}–${formatILS(Math.max(20,rec-80))} depending on interest.
-If you want it gone fast, post ${formatILS(quick)} and keep the description honest + clear.`;
-
   return {
     estimatedRangeILS:{low,high},
     recommendedListPriceILS:rec,
     quickSalePriceILS:quick,
-    explanation,
-    negotiationTips:tips
+    explanation
   };
 }
 
@@ -699,6 +694,7 @@ function renderListing(id){
                 <div class="row" style="margin-top:6px">
                   <span class="pill solid">${escapeHtml(listing.category)}</span>
                   <span class="pill">${escapeHtml(listing.location)}</span>
+                  ${listing.phone ? `<a class="pill" href="tel:${escapeHtml(phoneToTel(listing.phone))}">☎ ${escapeHtml(listing.phone)}</a>` : ``}
                 </div>
               </div>
               <a class="btn" href="#home">← Back</a>
@@ -738,9 +734,6 @@ function renderListing(id){
               <div class="col">
                 <div class="h2">AI explanation</div>
                 <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.explanation)}</div>
-                <div class="divider"></div>
-                <div class="h2">Negotiation tips</div>
-                <div class="small" style="margin-top:8px;white-space:pre-line">${escapeHtml(listing.ai.negotiationTips)}</div>
               </div>
             </div>
           </div>
@@ -771,6 +764,7 @@ function renderPost(){
     productName: "",
     category: CATEGORIES[0],
     location: "Israel",
+    phone: "",
     photoPreviewUrl: svgDataUri("Your photo here"),
     photoFile: null,
     photoUrl: "",
@@ -900,6 +894,9 @@ function renderPost(){
     const locEl = document.getElementById("location");
     if(locEl) locEl.oninput = (e)=>{ draft.location = e.target.value; };
 
+
+    const phoneEl = document.getElementById("phone");
+    if(phoneEl) phoneEl.oninput = (e)=>{ draft.phone = e.target.value; };
     const fileEl = document.getElementById("photo");
     if(fileEl) fileEl.onchange = (e)=>{
       const f = e.target.files && e.target.files[0];
@@ -1003,6 +1000,7 @@ function renderPost(){
         productName: draft.productName.trim(),
         category: draft.category,
         location: (draft.location || "Israel").trim() || "Israel",
+        phone: String(draft.phone || "").trim(),
         photoBase64: (draft.photoUrl || draft.photoPreviewUrl),
         photoUrl: (draft.photoUrl || ""),
         photoPublicId: (draft.photoPublicId || ""),
@@ -1027,13 +1025,14 @@ function renderPost(){
 
       // Bonus automation: log publish to Google Sheets via Make webhook
       // In Make, map these payload keys to your sheet columns:
-      // timestamp, id, productName, category, location, sellerPriceILS, aiRecommended, aiLowILS, aiHighILS, urgency, damages
+      // timestamp, id, productName, category, location, phone, sellerPriceILS, aiRecommended, aiLowILS, aiHighILS, urgency, damages
       sendToMake({
         timestamp: listing.createdAt,
         id: listing.id,
         productName: listing.productName,
         category: listing.category,
         location: listing.location,
+        phone: listing.phone,
         imageUrl: listing.photoUrl || listing.photoBase64 || "",
         sellerPriceILS: listing.sellerChosenListPriceILS,
         aiRecommended: listing.ai?.recommendedListPriceILS ?? "",
@@ -1110,7 +1109,12 @@ function renderPost(){
             <div class="label">Location</div>
             <input class="input" id="location" value="${escapeHtml(d.location)}" placeholder="Israel"/>
           </div>
-          <div class="col">
+          <div class="col" style="max-width:320px">
+              <div class="label">Phone number (optional)</div>
+              <input class="input" id="phone" value="${escapeHtml(d.phone || "")}" placeholder="e.g., 052-123-4567"/>
+              <div class="help">Shown on the listing so buyers can contact you.</div>
+            </div>
+            <div class="col">
             <div class="label">Photo (JPG/PNG, < 2.5MB)</div>
             <input class="input" id="photo" type="file" accept="image/png,image/jpeg,image/webp"/>
             <div class="help">For demo reliability, large images are blocked.</div>
@@ -1315,6 +1319,7 @@ function renderPost(){
               <div class="row" style="margin-top:10px">
                 <span class="pill solid">${escapeHtml(d.category)}</span>
                 <span class="pill">${escapeHtml(d.location || "Israel")}</span>
+                ${d.phone ? `<span class="pill">☎ ${escapeHtml(d.phone)}</span>` : ``}
               </div>
             </div>
 
@@ -1335,7 +1340,7 @@ function renderPost(){
 
         <div class="divider"></div>
         <div class="row" style="justify-content:space-between">
-          <button class="btn" id="backBtn">Back</button>
+          <button class="btn" id="backBtn">Choose price myself</button>
           <button class="btn primary" id="publishBtn">Publish</button>
         </div>
       </div>
